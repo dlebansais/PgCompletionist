@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PgCompletionist", "PgCompletionist\PgCompletionist.csproj", "{0FC585A9-948F-432E-BEF0-002A40ED26C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreBuild", "PreBuild\PreBuild.csproj", "{DF5F509A-5444-4F56-B799-82603427E6FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FC585A9-948F-432E-BEF0-002A40ED26C4}.Debug|x64.ActiveCfg = Debug|x64
+		{0FC585A9-948F-432E-BEF0-002A40ED26C4}.Debug|x64.Build.0 = Debug|x64
+		{0FC585A9-948F-432E-BEF0-002A40ED26C4}.Release|x64.ActiveCfg = Release|x64
+		{0FC585A9-948F-432E-BEF0-002A40ED26C4}.Release|x64.Build.0 = Release|x64
+		{DF5F509A-5444-4F56-B799-82603427E6FA}.Debug|x64.ActiveCfg = Debug|x64
+		{DF5F509A-5444-4F56-B799-82603427E6FA}.Debug|x64.Build.0 = Debug|x64
+		{DF5F509A-5444-4F56-B799-82603427E6FA}.Release|x64.ActiveCfg = Release|x64
+		{DF5F509A-5444-4F56-B799-82603427E6FA}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96BD096E-AE78-406C-B633-DEE88BC4B450}
+	EndGlobalSection
+EndGlobal
