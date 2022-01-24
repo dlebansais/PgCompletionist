@@ -34,18 +34,16 @@
 
   <ItemGroup>
     <None Remove="Resources\search.ico" />
+	<None Remove="Resources\search.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\search.ico" />
+	<Resource Include="Resources\search.ico" />
+	<Resource Include="Resources\search.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.376">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

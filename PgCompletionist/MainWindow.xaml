@@ -1,7 +1,12 @@
-﻿<Window x:Class="PgCompletionist.MainWindow"
+﻿<Window x:Class="PgCompletionist.MainWindowUI"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Project: Gorgon - Completionist">
+        Title="{Binding TitleText}"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        MinHeight="600" MinWidth="1100"
+        Icon="./Resources/search.png"
+        Closing="OnMainWindowClosing">
     <Grid>
 
     </Grid>
