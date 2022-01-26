@@ -1,5 +1,6 @@
 ﻿namespace PgCompletionist;
 
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -19,6 +20,8 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
 
     #region Properties
     public abstract string TitleText { get; protected set; }
+    public abstract ObservableCollection<Character> CharacterList { get; }
+    public abstract Character? CurrentCharacter { get; set; }
     #endregion
 
     #region Events
