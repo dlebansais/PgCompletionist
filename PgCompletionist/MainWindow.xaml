@@ -13,7 +13,29 @@
             <TextBlock Text="{Binding Name}"/>
         </DataTemplate>
         <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
-            <TextBlock Text="{Binding Name}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Name:" TextAlignment="Right" Margin="0,0,0,0"/>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="5,0,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Missing Skills:" TextAlignment="Right" Margin="0,5,0,0"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding MissingSkills}" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Non-maxed Skills:" TextAlignment="Right" Margin="0,5,0,0"/>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NonMaxedSkills}" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Missing Abilities:" TextAlignment="Right" Margin="0,5,0,0"/>
+                <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Missing Recipes:" TextAlignment="Right" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MissingRecipes}" TextWrapping="Wrap" Margin="5,5,0,0"/>
+            </Grid>
         </DataTemplate>
     </Window.Resources>
     <Grid Margin="10">
