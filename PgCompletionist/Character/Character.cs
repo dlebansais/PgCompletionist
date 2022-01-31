@@ -76,19 +76,25 @@ public class Character
         NonMaxedSkills = string.Empty;
         MissingAbilitiesList.Clear();
 
+        List<PgAbility> UnobtainableAbilityList = new();
+
+        foreach (string Key in ItemObjects.Keys)
+        {
+            PgItem PgItem = ItemObjects.Get(Key);
+            if (PgItem.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
+                if (PgItem.BestowAbility is PgAbility UnobtainableAbility)
+                    UnobtainableAbilityList.Add(UnobtainableAbility);
+        }
+
+
         Dictionary<PgSkill, List<PgAbility>> SkillAbilitiesTable = new();
 
         foreach (string Key in AbilityObjects.Keys)
         {
             PgAbility PgAbility = AbilityObjects.Get(Key);
-
-            if (PgAbility.KeywordList.Contains(AbilityKeyword.Lint_NotLearnable))
-                continue;
-            if (PgAbility.AbilityGroup is PgAbility AbilityGroup && AbilityGroup.InternalName == "RangedSlice1" && !IsFairy)
-                continue;
-
             PgSkill PgSkill = PgAbility.Skill;
-            if (IsIgnoredSkill(PgSkill))
+
+            if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || UnobtainableAbilityList.Contains(PgAbility))
                 continue;
 
             if (!SkillAbilitiesTable.ContainsKey(PgSkill))
@@ -100,9 +106,12 @@ public class Character
         foreach (string Key in SkillObjects.Keys)
         {
             PgSkill PgSkill = SkillObjects.Get(Key);
+
             if (!IsIgnoredSkill(PgSkill))
-                UpdateSkill(CharacterSkills, PgSkill, SkillAbilitiesTable);
+                UpdateSkill(CharacterSkills, PgSkill.Key, PgSkill.ObjectName, SkillAbilitiesTable.ContainsKey(PgSkill) ? SkillAbilitiesTable[PgSkill] : null, sidebarOnly: false);
         }
+
+        UpdateSkill(CharacterSkills, "Unknown", string.Empty, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
     }
 
     private bool IsIgnoredSkill(PgSkill pgSkill)
@@ -112,6 +121,21 @@ public class Character
 
         if (IsUnavailableSkill(pgSkill))
             return true;
+
+        return false;
+    }
+
+    private bool IsIgnoredAbility(PgAbility pgAbility)
+    {
+        if (pgAbility.KeywordList.Contains(AbilityKeyword.Lint_NotLearnable))
+            return true;
+
+        if (pgAbility.AbilityGroup is PgAbility AbilityGroup && AbilityGroup.InternalName == "RangedSlice1" && !IsFairy)
+            return true;
+
+        foreach (PgAttribute Item in pgAbility.AttributesThatModPowerCostList)
+            if (Item.Key == "DRUID_COST_MOD" && !IsDruid)
+                return true;
 
         return false;
     }
@@ -130,16 +154,15 @@ public class Character
         return false;
     }
 
-    private void UpdateSkill(SkillSet characterSkills, PgSkill pgSkill, Dictionary<PgSkill, List<PgAbility>> skillAbilitiesTable)
+    private void UpdateSkill(SkillSet characterSkills, string skillName, string skillObjectName, List<PgAbility>? abilityList, bool sidebarOnly)
     {
-        string SkillName = pgSkill.Key;
         bool IsFound = false;
 
-        if (SkillName.Length > 0)
+        if (skillName.Length > 0)
         {
             Type SkillSetType = characterSkills.GetType();
 
-            PropertyInfo? Property = SkillSetType.GetProperty(SkillName);
+            PropertyInfo? Property = SkillSetType.GetProperty(skillName);
             if (Property is not null)
             {
                 Skill? Skill = Property.GetValue(characterSkills) as Skill;
@@ -152,12 +175,11 @@ public class Character
                         if (NonMaxedSkills.Length > 0)
                             NonMaxedSkills += ", ";
 
-                        NonMaxedSkills += $"{pgSkill.ObjectName} (level {Skill.Level})";
+                        NonMaxedSkills += $"{skillObjectName} (level {Skill.Level})";
                     }
 
-                    if (skillAbilitiesTable.ContainsKey(pgSkill))
-                        if (HasMissingAbilities(pgSkill, Skill, skillAbilitiesTable[pgSkill], characterSkills.Unknown, out string MissingAbilities))
-                            MissingAbilitiesList.Add(MissingAbilities);
+                    if (abilityList is not null && HasMissingAbilities(skillObjectName, Skill, abilityList, characterSkills.Unknown, sidebarOnly, out string MissingAbilities))
+                        MissingAbilitiesList.Add(MissingAbilities);
                 }
             }
             else
@@ -170,19 +192,24 @@ public class Character
             if (MissingSkills.Length > 0)
                 MissingSkills += ", ";
 
-            MissingSkills += pgSkill.ObjectName;
+            MissingSkills += skillObjectName;
         }
     }
 
-    private bool HasMissingAbilities(PgSkill pgSkill, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, out string missingAbilities)
+    private bool HasMissingAbilities(string skillObjectName, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, out string missingAbilities)
     {
         missingAbilities = string.Empty;
 
         foreach (PgAbility PgAbility in skillAbilityList)
-            if (IsAbilityMissing(PgAbility, skill) && IsAbilityMissing(PgAbility, unknownSkill))
+            if (IsAbilityMissing(PgAbility, skill) && IsAbilityMissing(PgAbility, unknownSkill) && (!sidebarOnly || PgAbility.CanBeOnSidebar))
             {
                 if (missingAbilities.Length == 0)
-                    missingAbilities = $"Skill {pgSkill.ObjectName} is missing: ";
+                {
+                    if (skillObjectName.Length > 0)
+                        missingAbilities = $"Skill {skillObjectName} is missing: ";
+                    else
+                        missingAbilities = $"Also missing (no skill): ";
+                }
                 else
                     missingAbilities += ", ";
 
