@@ -1,10 +1,10 @@
 ﻿namespace PgCompletionist;
 
 using PgObjects;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class Character
 {
@@ -41,11 +41,11 @@ public class Character
 
     private void UpdateFlags(CharacterReport report)
     {
-        if (report.CurrentStats is System.Text.Json.JsonElement CurrentStats)
+        if (report.CurrentStats is JsonElement CurrentStats)
         {
             foreach (object? Item in CurrentStats.EnumerateObject())
             {
-                if (Item is System.Text.Json.JsonProperty Property)
+                if (Item is JsonProperty Property)
                 {
                     switch (Property.Name)
                     {
@@ -69,8 +69,28 @@ public class Character
 
     private void UpdateSkillsAndAbilities(CharacterReport report)
     {
-        if (report.Skills is not SkillSet CharacterSkills)
+        if (report.Skills is not JsonElement Skills)
             return;
+
+        JsonSerializerOptions Options = new()
+        {
+            Converters =
+            {
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+            }
+        };
+
+        Dictionary<string, Skill> KnownSkillTable = new();
+        foreach (object? Item in Skills.EnumerateObject())
+            if (Item is JsonProperty Property)
+            {
+                string Name = Property.Name;
+
+                if (JsonSerializer.Deserialize<Skill>(Property.Value, Options) is Skill KnownSkill)
+                {
+                    KnownSkillTable.Add(Name, KnownSkill);
+                }
+            }
 
         MissingSkills = string.Empty;
         NonMaxedSkills = string.Empty;
@@ -108,10 +128,10 @@ public class Character
             PgSkill PgSkill = SkillObjects.Get(Key);
 
             if (!IsIgnoredSkill(PgSkill))
-                UpdateSkill(CharacterSkills, PgSkill.Key, PgSkill.ObjectName, SkillAbilitiesTable.ContainsKey(PgSkill) ? SkillAbilitiesTable[PgSkill] : null, sidebarOnly: false);
+                UpdateSkill(KnownSkillTable, PgSkill.Key, PgSkill.ObjectName, SkillAbilitiesTable.ContainsKey(PgSkill) ? SkillAbilitiesTable[PgSkill] : null, sidebarOnly: false);
         }
 
-        UpdateSkill(CharacterSkills, "Unknown", string.Empty, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
+        UpdateSkill(KnownSkillTable, "Unknown", string.Empty, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
     }
 
     private bool IsIgnoredSkill(PgSkill pgSkill)
@@ -154,37 +174,27 @@ public class Character
         return false;
     }
 
-    private void UpdateSkill(SkillSet characterSkills, string skillName, string skillObjectName, List<PgAbility>? abilityList, bool sidebarOnly)
+    private void UpdateSkill(Dictionary<string, Skill> knownSkillTable, string skillName, string skillObjectName, List<PgAbility>? abilityList, bool sidebarOnly)
     {
+        Skill? UnknownSkill = knownSkillTable.ContainsKey("Unknown") ? knownSkillTable["Unknown"] : null;
+
         bool IsFound = false;
 
-        if (skillName.Length > 0)
+        if (skillName.Length > 0 && knownSkillTable.ContainsKey(skillName))
         {
-            Type SkillSetType = characterSkills.GetType();
+            Skill Skill = knownSkillTable[skillName];
+            IsFound = true;
 
-            PropertyInfo? Property = SkillSetType.GetProperty(skillName);
-            if (Property is not null)
+            if (Skill.XpTowardNextLevel > 0)
             {
-                Skill? Skill = Property.GetValue(characterSkills) as Skill;
-                if (Skill is not null)
-                {
-                    IsFound = true;
+                if (NonMaxedSkills.Length > 0)
+                    NonMaxedSkills += ", ";
 
-                    if (Skill.XpTowardNextLevel > 0)
-                    {
-                        if (NonMaxedSkills.Length > 0)
-                            NonMaxedSkills += ", ";
-
-                        NonMaxedSkills += $"{skillObjectName} (level {Skill.Level})";
-                    }
-
-                    if (abilityList is not null && HasMissingAbilities(skillObjectName, Skill, abilityList, characterSkills.Unknown, sidebarOnly, out string MissingAbilities))
-                        MissingAbilitiesList.Add(MissingAbilities);
-                }
+                NonMaxedSkills += $"{skillObjectName} (level {Skill.Level})";
             }
-            else
-            {
-            }
+
+            if (abilityList is not null && HasMissingAbilities(skillObjectName, Skill, abilityList, UnknownSkill, sidebarOnly, out string MissingAbilities))
+                MissingAbilitiesList.Add(MissingAbilities);
         }
 
         if (!IsFound)
@@ -238,12 +248,12 @@ public class Character
 
     private void UpdateRecipes(CharacterReport report)
     {
-        if (report.RecipeCompletions is not System.Text.Json.JsonElement RecipeCompletions)
+        if (report.RecipeCompletions is not JsonElement RecipeCompletions)
             return;
 
         List<string> KnownRecipeNameList = new();
         foreach (object? Item in RecipeCompletions.EnumerateObject())
-            if (Item is System.Text.Json.JsonProperty Property)
+            if (Item is JsonProperty Property)
             {
                 string Name = Property.Name;
                 KnownRecipeNameList.Add(Name);
