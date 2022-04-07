@@ -102,8 +102,8 @@ public class Character
         {
             PgItem PgItem = ItemObjects.Get(Key);
             if (PgItem.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
-                if (PgItem.BestowAbility is PgAbility UnobtainableAbility)
-                    UnobtainableAbilityList.Add(UnobtainableAbility);
+                if (PgItem.BestowAbility_Key is string AbilityKey)
+                    UnobtainableAbilityList.Add(AbilityObjects.Get(AbilityKey));
         }
 
 
@@ -112,7 +112,10 @@ public class Character
         foreach (string Key in AbilityObjects.Keys)
         {
             PgAbility PgAbility = AbilityObjects.Get(Key);
-            PgSkill PgSkill = PgAbility.Skill;
+            if (PgAbility.Skill_Key is not string SkillKey)
+                continue;
+
+            PgSkill PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : SkillObjects.Get(SkillKey));
 
             if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || UnobtainableAbilityList.Contains(PgAbility))
                 continue;
@@ -139,7 +142,7 @@ public class Character
         if (pgSkill.IsUmbrellaSkill)
             return true;
 
-        if (IsUnavailableSkill(pgSkill))
+        if (IsUnavailableSkill(pgSkill.Key))
             return true;
 
         return false;
@@ -150,8 +153,12 @@ public class Character
         if (pgAbility.KeywordList.Contains(AbilityKeyword.Lint_NotLearnable))
             return true;
 
-        if (pgAbility.AbilityGroup is PgAbility AbilityGroup && AbilityGroup.InternalName == "RangedSlice1" && !IsFairy)
-            return true;
+        if (pgAbility.AbilityGroup_Key is string AbilityGroupKey)
+        {
+            PgAbility AbilityGroup = AbilityObjects.Get(AbilityGroupKey);
+            if (AbilityGroup.InternalName == "RangedSlice1" && !IsFairy)
+                return true;
+        }
 
         foreach (PgAttribute Item in pgAbility.AttributesThatModPowerCostList)
             if (Item.Key == "DRUID_COST_MOD" && !IsDruid)
@@ -160,15 +167,15 @@ public class Character
         return false;
     }
 
-    private bool IsUnavailableSkill(PgSkill pgSkill)
+    private bool IsUnavailableSkill(string skillKey)
     {
-        if (!IsLycanthrope && (pgSkill.Key == "Werewolf" || pgSkill.Key == "Howling" || pgSkill.Key == "WerewolfMetabolism"))
+        if (!IsLycanthrope && (skillKey == "Werewolf" || skillKey == "Howling" || skillKey == "WerewolfMetabolism"))
             return true;
 
-        if (!IsDruid && pgSkill.Key == "Druid")
+        if (!IsDruid && skillKey == "Druid")
             return true;
 
-        if (!IsFairy && (pgSkill.Key == "Race_Fae" || pgSkill.Key == "FairyMagic"))
+        if (!IsFairy && (skillKey == "Race_Fae" || skillKey == "FairyMagic"))
             return true;
 
         return false;
@@ -288,7 +295,7 @@ public class Character
 
     private bool IsFairyOnlyRecipe(PgRecipe pgRecipe)
     {
-        if (pgRecipe.Skill.Key == "Race_Fae")
+        if (pgRecipe.Skill_Key == "Race_Fae")
             return true;
 
         if (pgRecipe.SourceList.Count > 0)
@@ -298,7 +305,7 @@ public class Character
                 if (Source is not PgSourceAutomaticFromSkill FromSkill)
                     return false;
 
-                if (FromSkill.Skill.Key != "Race_Fae")
+                if (FromSkill.Skill_Key != "Race_Fae")
                     return false;
             }
 
@@ -313,12 +320,12 @@ public class Character
         foreach (PgSource Source in pgRecipe.SourceList)
             if (Source is PgSourceItem FromItem)
             {
-                PgItem Item = FromItem.Item;
+                PgItem Item = ItemObjects.Get(FromItem.Item_Key!);
 
                 if (Item.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
                     return false;
 
-                foreach (KeyValuePair<PgSkill, int> Entry in Item.SkillRequirementTable)
+                foreach (KeyValuePair<string, int> Entry in Item.SkillRequirementTable)
                     if (IsUnavailableSkill(Entry.Key))
                         return false;
             }
@@ -349,15 +356,15 @@ public class Character
         switch (pgSource)
         {
             case PgSourceAutomaticFromSkill AsAutomaticFromSkill:
-                return $"skillup in {AsAutomaticFromSkill.Skill.Name}";
+                return $"skillup in {SkillObjects.Get(AsAutomaticFromSkill.Skill_Key!).Name}";
             case PgSourceEffect AsEffect:
-                return $"effect {AsEffect.Effect.Name}";
+                return $"effect {EffectObjects.Get(AsEffect.Effect_Key!).Name}";
             case PgSourceGift AsGift:
                 return $"gift to {NpcName(AsGift.Npc)}";
             case PgSourceHangOut AsHangOut:
                 return $"hangout with {NpcName(AsHangOut.Npc)}";
             case PgSourceItem AsItem:
-                PgItem Item = AsItem.Item;
+                PgItem Item = ItemObjects.Get(AsItem.Item_Key!);
                 if (Item.KeywordTable.ContainsKey(ItemKeyword.Scroll) || Item.KeywordTable.ContainsKey(ItemKeyword.Document))
                     return $"using scroll {Item.Name}";
                 else
@@ -365,9 +372,9 @@ public class Character
             case PgSourceLearnAbility:
                 return "laerning ability";
             case PgSourceQuest AsQuest:
-                return $"quest {AsQuest.Quest.Name}";
+                return $"quest {QuestObjects.Get(AsQuest.Quest_Key!).Name}";
             case PgSourceRecipe AsRecipe:
-                return $"recipe {AsRecipe.Recipe.Name}";
+                return $"recipe {RecipeObjects.Get(AsRecipe.Recipe_Key!).Name}";
             case PgSourceTraining AsTraining:
                 return $"training with {NpcName(AsTraining.Npc)}";
             default:
@@ -377,8 +384,11 @@ public class Character
 
     private string NpcName(PgNpcLocation location)
     {
-        if (location.Npc is PgNpc Npc)
+        if (location.Npc_Key is string NpcKey)
+        {
+            PgNpc Npc = NpcObjects.Get(NpcKey);
             return Npc.Name;
+        }
         else if (location.NpcName.Length > 0)
             return location.NpcName;
         else if (location.NpcEnum != SpecialNpc.Internal_None)
