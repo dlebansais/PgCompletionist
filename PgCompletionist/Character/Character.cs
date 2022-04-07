@@ -160,8 +160,8 @@ public class Character
                 return true;
         }
 
-        foreach (PgAttribute Item in pgAbility.AttributesThatModPowerCostList)
-            if (Item.Key == "DRUID_COST_MOD" && !IsDruid)
+        foreach (string ItemKey in pgAbility.AttributesThatModPowerCostList)
+            if (ItemKey == "DRUID_COST_MOD" && !IsDruid)
                 return true;
 
         return false;
