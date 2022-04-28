@@ -108,6 +108,8 @@ public class Character
 
 
         Dictionary<PgSkill, List<PgAbility>> SkillAbilitiesTable = new();
+        SkillAbilitiesTable.Add(PgSkill.Unknown, new List<PgAbility>());
+        SkillAbilitiesTable.Add(PgSkill.AnySkill, new List<PgAbility>());
 
         foreach (string Key in AbilityObjects.Keys)
         {
