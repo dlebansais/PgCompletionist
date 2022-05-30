@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
 
 /// <summary>
 /// Main Window UI.
@@ -19,13 +21,17 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     #endregion
 
     #region Properties
-    public abstract string TitleText { get; protected set; }
-    public abstract ObservableCollection<Character> CharacterList { get; }
-    public abstract Character? CurrentCharacter { get; set; }
+    public abstract string TitleText { get; }
+    public abstract string StatusText { get; }
+    public abstract int SelectedCharacterIndex { get; set; }
+    public abstract WpfObservableRangeCollection<Character> CharacterList { get; }
+    public abstract Character? CurrentCharacter { get; }
     #endregion
 
     #region Events
-    protected abstract void OnMainWindowClosing(object sender, CancelEventArgs e);
+    public abstract void OnMainWindowLoaded(object sender, RoutedEventArgs args);
+    public abstract void OnMainWindowClosing(object sender, CancelEventArgs args);
+    public abstract void OnAddReport(object sender, ExecutedRoutedEventArgs args);
     #endregion
 
     #region Implementation of INotifyPropertyChanged

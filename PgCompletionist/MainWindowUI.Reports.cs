@@ -8,11 +8,11 @@ public abstract partial class MainWindowUI
 {
     protected void InitReports()
     {
-        string ChatLogPath = NativeMethods.GetKnownFolderPath(NativeMethods.LocalLowId);
+        string ChatLogPath = WpfLayout.NativeMethods.GetKnownFolderPath(WpfLayout.NativeMethods.LocalLowId);
         string LocalLowFolder = Path.Combine(ChatLogPath, @"Elder Game\Project Gorgon");
         ReportFolder = Path.Combine(LocalLowFolder, "Reports");
 
-        ParseReports();
+        //ParseReports();
     }
 
     protected void ParseReports()

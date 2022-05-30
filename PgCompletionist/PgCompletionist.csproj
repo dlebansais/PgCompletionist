@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
@@ -14,13 +14,13 @@
     <Product />
     <Description>Project: Gorgon Completionist</Description>
     <Copyright>Copyright © 2022 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
+    <AssemblyVersion>1.0.0.7</AssemblyVersion>
+    <FileVersion>1.0.0.6</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>PgCompletionist</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <ApplicationIcon>Resources\search.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\main.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,13 +32,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\search.ico" />
-	<None Remove="Resources\search.png" />
+	<None Remove="Resources\mainicon.i" />
+	<None Remove="Resources\mainicon.p" />
+	<None Remove="Resources\main.ico" />
+	<None Remove="Resources\main.png" />
   </ItemGroup>
 
   <ItemGroup>
-	<Resource Include="Resources\search.ico" />
-	<Resource Include="Resources\search.png" />
+	<Resource Include="Resources\mainicon.i" />
+	<Resource Include="Resources\mainicon.p" />
+	<Resource Include="Resources\main.ico" />
+	<Resource Include="Resources\main.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +52,7 @@
     </PackageReference>
     <PackageReference Include="Contracts-Debug" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="Contracts" Version="1.1.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">
@@ -60,6 +65,10 @@
     <Reference Include="PgObjects">
       <HintPath>..\Dependencies\PgObjects\$(Platform)\$(Configuration)\$(TargetFramework)\PgObjects.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WpfLayout.Wpf\WpfLayout.Wpf.csproj" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">

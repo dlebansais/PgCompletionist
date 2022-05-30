@@ -2,47 +2,29 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PgCompletionist"
+        xmlns:wpflayout="clr-namespace:WpfLayout;assembly=WpfLayout.Wpf"
         Title="{Binding TitleText}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
         MinHeight="600" MinWidth="1100"
-        Icon="./Resources/search.png"
+        Icon="./Resources/main.png"
+        Loaded="OnMainWindowLoaded"
         Closing="OnMainWindowClosing">
-    <Window.Resources>
-        <DataTemplate x:Key="CharacterNameTemplate" DataType="{x:Type local:Character}">
-            <TextBlock Text="{Binding Name}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:Character}">
-            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
-        </DataTemplate>
-        <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Name:" TextAlignment="Right" Margin="0,0,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="5,0,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Missing Skills:" TextAlignment="Right" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding MissingSkills}" TextWrapping="Wrap" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="Non-maxed Skills:" TextAlignment="Right" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NonMaxedSkills}" TextWrapping="Wrap" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="Missing Abilities:" TextAlignment="Right" Margin="0,5,0,0"/>
-                <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplate="{StaticResource MissingAbilitiesTemplate}" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Missing Recipes:" TextAlignment="Right" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MissingRecipes}" TextWrapping="Wrap" Margin="5,5,0,0"/>
-            </Grid>
-        </DataTemplate>
-    </Window.Resources>
-    <Grid Margin="10">
-        <ContentControl Content="{Binding ElementName=ctrlCharacterName, Path=SelectedItem}" ContentTemplate="{StaticResource CharacterTemplate}"/>
-        <ComboBox x:Name="ctrlCharacterName" ItemsSource="{Binding CharacterList}" SelectedItem="{Binding CurrentCharacter}" ItemTemplate="{StaticResource CharacterNameTemplate}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="150"/>
-    </Grid>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
+    </Window.CommandBindings>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,10,10,0">
+            <TextBlock VerticalAlignment="Center" FontSize="16">Select a character:</TextBlock>
+            <ComboBox ItemsSource="{Binding CharacterList}" SelectedIndex="{Binding SelectedCharacterIndex}" ItemTemplate="{StaticResource CharacterNameTemplate}" Width="150" VerticalAlignment="Center" FontSize="16" Margin="5,0,0,0"/>
+            <Button Content="Add Report..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="VIP Report (*.txt)|*.txt" FontSize="16" Width="120" Height="26" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <Grid/>
+        </StackPanel>
+        <Border DockPanel.Dock="Bottom" BorderBrush="DarkGray" BorderThickness="0,1,0,0">
+            <TextBlock Text="{Binding StatusText}" FontSize="16" Margin="10,5,10,5"/>
+        </Border>
+        <Grid Margin="10">
+            <ContentControl Content="{Binding CurrentCharacter}" ContentTemplate="{StaticResource CharacterTemplate}"/>
+        </Grid>
+    </DockPanel>
 </Window>

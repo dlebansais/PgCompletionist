@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <Platforms>x64</Platforms>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.4" />
+    <PackageReference Include="TaskbarTools-Debug" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="TaskbarTools" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+</Project>

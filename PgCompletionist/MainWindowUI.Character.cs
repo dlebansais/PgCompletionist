@@ -7,9 +7,6 @@ public abstract partial class MainWindowUI
         CharacterList.Add(newCharacter);
 
         if (CurrentCharacter is null)
-        {
-            CurrentCharacter = newCharacter;
-            NotifyPropertyChanged(nameof(CurrentCharacter));
-        }
+            SelectedCharacterIndex = CharacterList.Count - 1;
     }
 }
