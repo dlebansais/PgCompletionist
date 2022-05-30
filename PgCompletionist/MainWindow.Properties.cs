@@ -39,4 +39,22 @@ public partial class MainWindow
     {
         get { return SelectedCharacterIndex >= 0 && SelectedCharacterIndex < CharacterList.Count ? CharacterList[SelectedCharacterIndex] : null; }
     }
+
+    public bool IsAnalysisStarted
+    {
+        get
+        {
+            return IsAnalysisStartedInternal;
+        }
+        set
+        {
+            if (IsAnalysisStartedInternal != value)
+            {
+                IsAnalysisStartedInternal = value;
+                NotifyThisPropertyChanged();
+            }
+        }
+    }
+
+    private bool IsAnalysisStartedInternal;
 }

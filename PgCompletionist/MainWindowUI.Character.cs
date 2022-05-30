@@ -4,9 +4,16 @@ public abstract partial class MainWindowUI
 {
     protected void AddCharacter(Character newCharacter)
     {
-        CharacterList.Add(newCharacter);
+        for (int i = 0; i < CharacterList.Count; i++)
+        
+            if (CharacterList[i].Name == newCharacter.Name)
+            {
+                CharacterList[i] = newCharacter;
+                SelectedCharacterIndex = i;
+                return;
+            }
 
-        if (CurrentCharacter is null)
-            SelectedCharacterIndex = CharacterList.Count - 1;
+        CharacterList.Add(newCharacter);
+        SelectedCharacterIndex = CharacterList.Count - 1;
     }
 }

@@ -36,8 +36,10 @@ public partial class MainWindow
 
     private async Task SaveSettings()
     {
-        Settings? Settings = new();
-        Settings.CharacterList.AddRange(CharacterList);
+        Settings Settings = new();
+        Settings.CharacterList = new Character[CharacterList.Count];
+        CharacterList.CopyTo(Settings.CharacterList, 0);
+
         Settings.SelectedCharacterIndex = SelectedCharacterIndex;
 
         await LocalStorage.SetItemAsync<Settings>(SettingsName, Settings);

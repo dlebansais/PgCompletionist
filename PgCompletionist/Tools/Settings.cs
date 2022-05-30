@@ -1,13 +1,9 @@
 ﻿namespace PgCompletionist;
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+using System;
 
 public class Settings
 {
-    public List<Character> CharacterList { get; } = new();
+    public Character[] CharacterList { get; set;} = Array.Empty<Character>();
     public int SelectedCharacterIndex { get; set; }
 }

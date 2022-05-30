@@ -8,6 +8,10 @@ using System.Text.Json.Serialization;
 
 public class Character
 {
+    public Character()
+    {
+    }
+
     public Character(CharacterReport report, string name)
     {
         Name = name;
@@ -15,14 +19,14 @@ public class Character
         Update(report);
     }
 
-    public string Name { get; }
-    public string MissingSkills { get; private set; } = string.Empty;
-    public string NonMaxedSkills { get; private set; } = string.Empty;
-    public List<string> MissingAbilitiesList { get; private set; } = new();
-    public string MissingRecipes { get; private set; } = string.Empty;
-    public bool IsFairy { get; private set; }
-    public bool IsLycanthrope { get; private set; }
-    public bool IsDruid { get; private set; }
+    public string Name { get; set; } = string.Empty;
+    public string MissingSkills { get; set; } = string.Empty;
+    public string NonMaxedSkills { get; set; } = string.Empty;
+    public List<string> MissingAbilitiesList { get; set; } = new();
+    public string MissingRecipes { get; set; } = string.Empty;
+    public bool IsFairy { get; set; }
+    public bool IsLycanthrope { get; set; }
+    public bool IsDruid { get; set; }
 
     private void Update(CharacterReport report)
     {

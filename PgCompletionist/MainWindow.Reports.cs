@@ -1,38 +1,24 @@
 ﻿namespace PgCompletionist;
 
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public abstract partial class MainWindowUI
+public partial class MainWindow
 {
-    protected void InitReports()
-    {
-        string ChatLogPath = WpfLayout.NativeMethods.GetKnownFolderPath(WpfLayout.NativeMethods.LocalLowId);
-        string LocalLowFolder = Path.Combine(ChatLogPath, @"Elder Game\Project Gorgon");
-        ReportFolder = Path.Combine(LocalLowFolder, "Reports");
-
-        //ParseReports();
-    }
-
-    protected void ParseReports()
-    {
-        string[] Files = Directory.GetFiles(ReportFolder, "*.json");
-        foreach (string File in Files)
-            ParseFile(File);
-    }
-
-    protected void ParseFile(string fileName)
+    private void ParseFile(string fileName, string content)
     {
         string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
         if (FileNameWithoutExtension.StartsWith("Character_"))
-            ParseCharacterReport(fileName, FileNameWithoutExtension.Substring(10));
+            ParseCharacterReport(FileNameWithoutExtension.Substring(10), content);
     }
 
-    protected void ParseCharacterReport(string fileName, string characterName)
+    private void ParseCharacterReport(string characterName, string content)
     {
-        using FileStream Stream = new(fileName, FileMode.Open, FileAccess.Read);
+        byte[] ContentBytes = Encoding.UTF8.GetBytes(content);
+        using MemoryStream Stream = new(ContentBytes);
 
         JsonSerializerOptions Options = new()
         {
@@ -46,7 +32,8 @@ public abstract partial class MainWindowUI
             if (IsValidReport(Report, characterName))
             {
                 Character NewCharacter = new Character(Report, characterName);
-                AddCharacter(NewCharacter);
+
+                TaskDispatcher.Dispatch(() => AddCharacter(NewCharacter));
             }
     }
 
