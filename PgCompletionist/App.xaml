@@ -11,6 +11,8 @@
         <conv:BooleanToObjectConverter x:Key="convBooleanToObject"/>
         <localsel:NextOrLastMissingSkillTemplateSelector x:Key="selNextOrLastMissingSkillTemplate"/>
         <localsel:NextOrLastNonMaxedSkillTemplateSelector x:Key="selNextOrLastNonMaxedSkillTemplate"/>
+        <localsel:NextOrLastMissingAbilityTemplateSelector x:Key="selNextOrLastMissingAbilityTemplate"/>
+        <localsel:NextOrLastMissingRecipeTemplateSelector x:Key="selNextOrLastMissingRecipeTemplate"/>
         <localconv:IdToImageSourceConverter x:Key="convIdToImageSource"/>
         <CompositeCollection x:Key="CollapsedVisible">
             <Visibility>Collapsed</Visibility>
@@ -78,9 +80,6 @@
         <DataTemplate x:Key="CharacterNameTemplate" DataType="{x:Type local:Character}">
             <TextBlock Text="{Binding Name}" FontSize="16"/>
         </DataTemplate>
-        <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:Character}">
-            <TextBlock Text="{Binding}" FontSize="16" TextWrapping="Wrap"/>
-        </DataTemplate>
         <DataTemplate x:Key="NextMissingSkillTemplate" DataType="{x:Type local:MissingSkill}">
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
@@ -113,6 +112,48 @@
                 <TextBlock Text=")." FontSize="16"/>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="NextMissingAbilityTemplate" DataType="{x:Type local:MissingAbility}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="," FontSize="16" Margin="0,0,5,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastMissingAbilityTemplate" DataType="{x:Type local:MissingAbility}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="." FontSize="16"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:MissingAbilitesBySkill}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Image Source="{Binding SkillIconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding SkillName}" FontSize="16" TextWrapping="Wrap"/>
+                    <TextBlock Text=":" FontSize="16"/>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding MissingAbilities}" ItemTemplateSelector="{StaticResource selNextOrLastMissingAbilityTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="20,5,0,0"/>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="NextMissingRecipeTemplate" DataType="{x:Type local:MissingRecipe}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="(From" FontSize="16" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Sources}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text=")," FontSize="16" Margin="0,0,5,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastMissingRecipeTemplate" DataType="{x:Type local:MissingRecipe}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="(From" FontSize="16" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Sources}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text=")." FontSize="16"/>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -135,7 +176,7 @@
                 <TextBlock Grid.Column="0" Grid.Row="3" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Abilities:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplate="{StaticResource MissingAbilitiesTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="4" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Recipes:</TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MissingRecipes}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <ItemsControl Grid.Column="1" Grid.Row="4" ItemsSource="{Binding MissingRecipes}" ItemTemplateSelector="{StaticResource selNextOrLastMissingRecipeTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
             </Grid>
         </DataTemplate>
     </Application.Resources>

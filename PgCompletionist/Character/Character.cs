@@ -22,8 +22,8 @@ public class Character
     public string Name { get; set; } = string.Empty;
     public List<MissingSkill> MissingSkills { get; set; } = new();
     public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
-    public List<string> MissingAbilitiesList { get; set; } = new();
-    public string MissingRecipes { get; set; } = string.Empty;
+    public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
+    public List<MissingRecipe> MissingRecipes { get; set; } = new();
     public bool IsFairy { get; set; }
     public bool IsLycanthrope { get; set; }
     public bool IsDruid { get; set; }
@@ -237,7 +237,7 @@ public class Character
                 NonMaxedSkills.Add(NewItem);
             }
 
-            if (abilityList is not null && HasMissingAbilities(skillObjectName, Skill, abilityList, UnknownSkill, sidebarOnly, out string MissingAbilities))
+            if (abilityList is not null && HasMissingAbilities(skillKey, skillObjectName, iconId, Skill, abilityList, UnknownSkill, sidebarOnly, out MissingAbilitesBySkill MissingAbilities))
                 MissingAbilitiesList.Add(MissingAbilities);
         }
 
@@ -254,27 +254,40 @@ public class Character
         }
     }
 
-    private bool HasMissingAbilities(string skillObjectName, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, out string missingAbilities)
+    private bool HasMissingAbilities(string skillKey, string skillObjectName, int skillIconId, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, out MissingAbilitesBySkill missingAbilities)
     {
-        missingAbilities = string.Empty;
+        missingAbilities = new();
 
         foreach (PgAbility PgAbility in skillAbilityList)
             if (IsAbilityMissing(PgAbility, skill) && IsAbilityMissing(PgAbility, unknownSkill) && (!sidebarOnly || PgAbility.CanBeOnSidebar))
             {
-                if (missingAbilities.Length == 0)
+                if (missingAbilities.SkillKey.Length == 0)
                 {
                     if (skillObjectName.Length > 0)
-                        missingAbilities = $"Skill {skillObjectName} is missing: ";
+                    {
+                        missingAbilities.SkillKey = skillKey;
+                        missingAbilities.SkillName = skillObjectName;
+                        missingAbilities.SkillIconId = skillIconId;
+                    }
                     else
-                        missingAbilities = $"Also missing (no skill): ";
+                    {
+                        missingAbilities.SkillKey = "Unknown";
+                        missingAbilities.SkillName = "(No skill)";
+                        missingAbilities.SkillIconId = 0;
+                    }
                 }
-                else
-                    missingAbilities += ", ";
 
-                missingAbilities += PgAbility.ObjectName;
+                MissingAbility NewItem = new()
+                {
+                    Key = PgAbility.Key,
+                    Name = PgAbility.Name,
+                    IconId = PgAbility.IconId,
+                };
+
+                missingAbilities.MissingAbilities.Add(NewItem);
             }
 
-        return missingAbilities.Length > 0;
+        return missingAbilities.MissingAbilities.Count > 0;
     }
 
     private bool IsAbilityMissing(PgAbility pgAbility, Skill? skill)
@@ -325,11 +338,17 @@ public class Character
 
             if (IsRecipeMissing(PgRecipe, KnownRecipeNameList))
             {
-                if (MissingRecipes.Length > 0)
-                    MissingRecipes += ", ";
-
                 string Sources = RecipeSources(PgRecipe.SourceList);
-                MissingRecipes += $"{PgRecipe.ObjectName} (from {Sources})";
+
+                MissingRecipe NewItem = new()
+                {
+                    Key = PgRecipe.Key,
+                    Name = PgRecipe.ObjectName,
+                    IconId = PgRecipe.IconId,
+                    Sources = Sources,
+                };
+
+                MissingRecipes.Add(NewItem);
             }
         }
     }
