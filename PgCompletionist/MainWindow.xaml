@@ -1,25 +1,27 @@
 ﻿<Window x:Class="PgCompletionist.MainWindowUI"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:PgCompletionist"
+        xmlns:conv="clr-namespace:Converters;assembly=XamlConverterLibrary"
         xmlns:localctrl="clr-namespace:CustomControls"
         xmlns:wpflayout="clr-namespace:WpfLayout;assembly=WpfLayout.Wpf"
-        Title="{Binding TitleText}"
+        xmlns:local="clr-namespace:PgCompletionist"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
-        MinHeight="600" MinWidth="1100"
+        MinWidth="1100"
+        MinHeight="600"
         Icon="./Resources/main.png"
         Loaded="OnMainWindowLoaded"
-        Closing="OnMainWindowClosing">
+        Closing="OnMainWindowClosing"
+        Title="{Binding TitleText}">
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
     </Window.CommandBindings>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,10,10,0">
-            <TextBlock VerticalAlignment="Center" FontSize="16">Select a character:</TextBlock>
-            <ComboBox IsReadOnly="True" ItemsSource="{Binding CharacterList}" SelectedIndex="{Binding SelectedCharacterIndex}" ItemTemplate="{StaticResource CharacterNameTemplate}" Width="150" VerticalAlignment="Center" FontSize="16" Margin="5,0,0,0" IsEnabled="{Binding IsAnalysisStarted, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}"/>
-            <Button Command="{StaticResource AddReportCommand}" Content="Add Report..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="VIP Report (*.json)|*.json" wpflayout:FileDialogButton.InitialDirectory="A520A1A4-1780-4FF6-BD18-167343C5AF16/Elder Game/Project Gorgon/Reports" FontSize="16" Width="120" Height="26" VerticalAlignment="Center" Margin="10,0,10,0" IsEnabled="{Binding IsAnalysisStarted, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}"/>
-            <localctrl:BusyIndicator Visibility="{Binding IsAnalysisStarted, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}, FallbackValue=Collapsed}" Width="24" Height="24" VerticalAlignment="Center"/>
+            <TextBlock FontSize="16" VerticalAlignment="Center">Select a character:</TextBlock>
+            <ComboBox ItemsSource="{Binding CharacterList}" SelectedIndex="{Binding SelectedCharacterIndex}" ItemTemplate="{StaticResource CharacterNameTemplate}" ItemContainerStyle="{StaticResource ComboBoxItemStretch}" IsReadOnly="True" HorizontalContentAlignment="Stretch" FontSize="16" IsEnabled="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}" VerticalAlignment="Center" Width="150" Margin="5,0,0,0"/>
+            <Button Command="{StaticResource AddReportCommand}" Content="Add Report..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="VIP Report (*.json)|*.json" wpflayout:FileDialogButton.InitialDirectory="A520A1A4-1780-4FF6-BD18-167343C5AF16/Elder Game/Project Gorgon/Reports" FontSize="16" Width="120" Height="26" IsEnabled="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}" VerticalAlignment="Center" Margin="10,0,10,0"/>
+            <localctrl:BusyIndicator Visibility="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}, FallbackValue=Collapsed}" VerticalAlignment="Center" Width="24" Height="24"/>
             <Grid/>
         </StackPanel>
         <Border DockPanel.Dock="Bottom" BorderBrush="DarkGray" BorderThickness="0,1,0,0">

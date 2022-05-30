@@ -23,7 +23,7 @@ public partial class MainWindow
         FileDialogResult Result = (FileDialogResult)args.Parameter;
         if (Result.FilePath.Length > 0)
         {
-            IsAnalysisStarted = true;
+            SetIsAnalyzing(true);
             TaskDispatcher.Dispatch(() => ExecuteAddReport(Result.FilePath, Result.Content));
         }
     }
@@ -31,6 +31,6 @@ public partial class MainWindow
     private async Task ExecuteAddReport(string fileName, string content)
     {
         await Task.Run(() => ParseFile(fileName, content));
-        IsAnalysisStarted = false;
+        SetIsAnalyzing(false);
     }
 }

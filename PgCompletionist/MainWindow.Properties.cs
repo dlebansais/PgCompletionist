@@ -32,21 +32,22 @@ public partial class MainWindow
         get { return SelectedCharacterIndex >= 0 && SelectedCharacterIndex < CharacterList.Count ? CharacterList[SelectedCharacterIndex] : null; }
     }
 
-    public bool IsAnalysisStarted
+    public override bool IsAnalyzing
     {
         get
         {
-            return IsAnalysisStartedInternal;
-        }
-        set
-        {
-            if (IsAnalysisStartedInternal != value)
-            {
-                IsAnalysisStartedInternal = value;
-                NotifyThisPropertyChanged();
-            }
+            return IsAnalyzingInternal;
         }
     }
 
-    private bool IsAnalysisStartedInternal;
+    private void SetIsAnalyzing(bool value)
+    {
+        if (IsAnalyzingInternal != value)
+        {
+            IsAnalyzingInternal = value;
+            NotifyThisPropertyChanged();
+        }
+    }
+
+    private bool IsAnalyzingInternal;
 }

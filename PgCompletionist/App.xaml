@@ -11,6 +11,56 @@
             <Visibility>Collapsed</Visibility>
             <Visibility>Visible</Visibility>
         </CompositeCollection>
+        <CompositeCollection x:Key="VisibleCollapsed">
+            <Visibility>Visible</Visibility>
+            <Visibility>Collapsed</Visibility>
+        </CompositeCollection>
+        <CompositeCollection x:Key="DisabledNormal">
+            <sys:Double>0.3</sys:Double>
+            <sys:Double>1</sys:Double>
+        </CompositeCollection>
+        <Style x:Key="ListBoxItemStretchDragDrop" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="AllowDrop" Value="True" />
+            <EventSetter Event="MouseMove" Handler="OnListBoxItemMouseMove"/>
+            <EventSetter Event="Drop" Handler="OnListBoxItemDrop" />
+        </Style>
+        <Style x:Key="ListBoxItemStretchSelectable" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style x:Key="ListBoxItemStretch" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style x:Key="ComboBoxItemStretch" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style x:Key="ListViewItemStretchSelectable" TargetType="{x:Type ListViewItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style x:Key="ListViewItemStretch" TargetType="{x:Type ListViewItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style x:Key="ListViewHeaderStretch" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <ControlTemplate x:Key="TabItemNoStyleTemplate" TargetType="{x:Type TabItem}">
+            <ContentPresenter ContentSource="Header"/>
+        </ControlTemplate>
+        <Style x:Key="TabItemNoStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="Template" Value="{StaticResource TabItemNoStyleTemplate}"/>
+        </Style>
+        <ItemsPanelTemplate x:Key="HorizontalWrapPanelTemplate">
+            <WrapPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="VerticalWrapPanelTemplate">
+            <WrapPanel Orientation="Vertical"/>
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="HorizontalVirtualizingStackPanelTemplate">
+            <VirtualizingStackPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
         <CompositeCollection x:Key="TrueFalse">
             <sys:Boolean>True</sys:Boolean>
             <sys:Boolean>False</sys:Boolean>
@@ -20,7 +70,7 @@
             <TextBlock Text="{Binding Name}" FontSize="16"/>
         </DataTemplate>
         <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:Character}">
-            <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="16"/>
+            <TextBlock Text="{Binding}" FontSize="16" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
             <Grid>
@@ -35,16 +85,16 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Name:" FontSize="16" TextAlignment="Right" Margin="0,0,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="0" FontSize="16" TextAlignment="Right">Name:</TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="16" Margin="5,0,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Missing Skills:" FontSize="16" TextAlignment="Right" Margin="0,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Skills:</TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding MissingSkills}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="Non-maxed Skills:" TextAlignment="Right" FontSize="16" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NonMaxedSkills}" TextWrapping="Wrap" FontSize="16" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="Missing Abilities:" TextAlignment="Right" FontSize="16" Margin="0,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Non-maxed Skills:</TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NonMaxedSkills}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Abilities:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplate="{StaticResource MissingAbilitiesTemplate}" Margin="5,5,0,0"/>
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Missing Recipes:" TextAlignment="Right" FontSize="16" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MissingRecipes}" TextWrapping="Wrap" FontSize="16" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Recipes:</TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MissingRecipes}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
             </Grid>
         </DataTemplate>
     </Application.Resources>
