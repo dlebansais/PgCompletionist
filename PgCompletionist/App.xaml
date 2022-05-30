@@ -61,6 +61,10 @@
         <ItemsPanelTemplate x:Key="HorizontalVirtualizingStackPanelTemplate">
             <VirtualizingStackPanel Orientation="Horizontal"/>
         </ItemsPanelTemplate>
+        <CompositeCollection x:Key="HiddenVisible">
+            <Visibility>Hidden</Visibility>
+            <Visibility>Visible</Visibility>
+        </CompositeCollection>
         <CompositeCollection x:Key="TrueFalse">
             <sys:Boolean>True</sys:Boolean>
             <sys:Boolean>False</sys:Boolean>
