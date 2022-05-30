@@ -1,8 +1,8 @@
 ﻿namespace PgCompletionist;
 
-public abstract partial class MainWindowUI
+public partial class MainWindow
 {
-    protected void AddCharacter(Character newCharacter)
+    private void AddCharacter(Character newCharacter)
     {
         for (int i = 0; i < CharacterList.Count; i++)
         

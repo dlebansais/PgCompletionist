@@ -1,4 +1,5 @@
 ﻿namespace PgCompletionist;
+
 using PgObjects;
 using WpfLayout;
 
