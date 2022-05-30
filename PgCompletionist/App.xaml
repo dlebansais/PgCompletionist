@@ -2,11 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:Converters;assembly=XamlConverterLibrary"
+             xmlns:localsel="clr-namespace:Selectors"
+             xmlns:localconv="clr-namespace:Converters"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:PgCompletionist"
              Startup="OnStartup">
     <Application.Resources>
         <conv:BooleanToObjectConverter x:Key="convBooleanToObject"/>
+        <localsel:NextOrLastMissingSkillTemplateSelector x:Key="selNextOrLastMissingSkillTemplate"/>
+        <localsel:NextOrLastNonMaxedSkillTemplateSelector x:Key="selNextOrLastNonMaxedSkillTemplate"/>
+        <localconv:IdToImageSourceConverter x:Key="convIdToImageSource"/>
         <CompositeCollection x:Key="CollapsedVisible">
             <Visibility>Collapsed</Visibility>
             <Visibility>Visible</Visibility>
@@ -76,6 +81,38 @@
         <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:Character}">
             <TextBlock Text="{Binding}" FontSize="16" TextWrapping="Wrap"/>
         </DataTemplate>
+        <DataTemplate x:Key="NextMissingSkillTemplate" DataType="{x:Type local:MissingSkill}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="," FontSize="16" Margin="0,0,5,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastMissingSkillTemplate" DataType="{x:Type local:MissingSkill}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="." FontSize="16"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="NextNonMaxedSkillTemplate" DataType="{x:Type local:NonMaxedSkill}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="(Level" FontSize="16" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Level}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text=")," FontSize="16" Margin="0,0,5,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastNonMaxedSkillTemplate" DataType="{x:Type local:NonMaxedSkill}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="(Level" FontSize="16" Margin="5,0,5,0"/>
+                <TextBlock Text="{Binding Level}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text=")." FontSize="16"/>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -92,9 +129,9 @@
                 <TextBlock Grid.Column="0" Grid.Row="0" FontSize="16" TextAlignment="Right">Name:</TextBlock>
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontSize="16" Margin="5,0,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="1" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Skills:</TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding MissingSkills}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <ItemsControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding MissingSkills}" ItemTemplateSelector="{StaticResource selNextOrLastMissingSkillTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="2" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Non-maxed Skills:</TextBlock>
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding NonMaxedSkills}" FontSize="16" TextWrapping="Wrap" Margin="5,5,0,0"/>
+                <ItemsControl Grid.Column="1" Grid.Row="2" ItemsSource="{Binding NonMaxedSkills}" ItemTemplateSelector="{StaticResource selNextOrLastNonMaxedSkillTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="3" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Abilities:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplate="{StaticResource MissingAbilitiesTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="4" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Recipes:</TextBlock>

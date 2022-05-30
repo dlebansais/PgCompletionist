@@ -1,9 +1,9 @@
 ﻿namespace PgCompletionist;
 
-using System;
+using System.Collections.Generic;
 
 public class Settings
 {
-    public Character[] CharacterList { get; set;} = Array.Empty<Character>();
+    public List<Character> CharacterList { get; set; } = new();
     public int SelectedCharacterIndex { get; set; }
 }

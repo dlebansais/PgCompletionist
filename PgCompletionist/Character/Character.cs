@@ -20,8 +20,8 @@ public class Character
     }
 
     public string Name { get; set; } = string.Empty;
-    public string MissingSkills { get; set; } = string.Empty;
-    public string NonMaxedSkills { get; set; } = string.Empty;
+    public List<MissingSkill> MissingSkills { get; set; } = new();
+    public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
     public List<string> MissingAbilitiesList { get; set; } = new();
     public string MissingRecipes { get; set; } = string.Empty;
     public bool IsFairy { get; set; }
@@ -34,6 +34,7 @@ public class Character
         UpdateSkillsAndAbilities(report);
         UpdateRecipes(report);
 
+        /*
         Debug.WriteLine($"  Missing Skills: {MissingSkills}");
         Debug.WriteLine($"Non-maxed Skills: {NonMaxedSkills}");
 
@@ -41,6 +42,7 @@ public class Character
             Debug.WriteLine(Item);
 
         Debug.WriteLine($" Missing Recipes: {MissingRecipes}");
+        */
     }
 
     private void UpdateFlags(CharacterReport report)
@@ -96,8 +98,8 @@ public class Character
                 }
             }
 
-        MissingSkills = string.Empty;
-        NonMaxedSkills = string.Empty;
+        MissingSkills = new();
+        NonMaxedSkills = new();
         MissingAbilitiesList.Clear();
 
         List<PgAbility> UnobtainableAbilityList = new();
@@ -135,12 +137,13 @@ public class Character
         foreach (string Key in SkillObjects.Keys)
         {
             PgSkill PgSkill = SkillObjects.Get(Key);
+            int IconId = PgSkill.IconId;
 
             if (!IsIgnoredSkill(PgSkill))
-                UpdateSkill(KnownSkillTable, PgSkill.Key, PgSkill.ObjectName, SkillAbilitiesTable.ContainsKey(PgSkill) ? SkillAbilitiesTable[PgSkill] : null, sidebarOnly: false);
+                UpdateSkill(KnownSkillTable, PgSkill.Key, PgSkill.ObjectName, IconId, SkillAbilitiesTable.ContainsKey(PgSkill) ? SkillAbilitiesTable[PgSkill] : null, sidebarOnly: false);
         }
 
-        UpdateSkill(KnownSkillTable, "Unknown", string.Empty, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
+        UpdateSkill(KnownSkillTable, "Unknown", string.Empty, 0, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
     }
 
     private bool IsIgnoredSkill(PgSkill pgSkill)
@@ -187,23 +190,51 @@ public class Character
         return false;
     }
 
-    private void UpdateSkill(Dictionary<string, Skill> knownSkillTable, string skillName, string skillObjectName, List<PgAbility>? abilityList, bool sidebarOnly)
+    private bool SkillObjectNameToKey(string skillObjectName, out string skillKey, out string skillName)
+    {
+        Dictionary<string, string> SkillNamesTable = Groups.SkillNamesTable;
+
+        foreach (KeyValuePair<string, string> Entry in SkillNamesTable)
+        {
+            string Name = Entry.Value;
+            if (Name.Length == 0)
+                Name = Entry.Key;
+
+            if (skillObjectName == Name)
+            {
+                skillKey = Entry.Key;
+                skillName = Name;
+                return true;
+            }
+        }
+
+        skillKey = string.Empty;
+        skillName = string.Empty;
+        return false;
+    }
+
+    private void UpdateSkill(Dictionary<string, Skill> knownSkillTable, string skillKey, string skillObjectName, int iconId, List<PgAbility>? abilityList, bool sidebarOnly)
     {
         Skill? UnknownSkill = knownSkillTable.ContainsKey("Unknown") ? knownSkillTable["Unknown"] : null;
 
         bool IsFound = false;
 
-        if (skillName.Length > 0 && knownSkillTable.ContainsKey(skillName))
+        if (skillKey.Length > 0 && knownSkillTable.ContainsKey(skillKey))
         {
-            Skill Skill = knownSkillTable[skillName];
+            Skill Skill = knownSkillTable[skillKey];
             IsFound = true;
 
             if (Skill.XpTowardNextLevel > 0)
             {
-                if (NonMaxedSkills.Length > 0)
-                    NonMaxedSkills += ", ";
-
-                NonMaxedSkills += $"{skillObjectName} (level {Skill.Level})";
+                NonMaxedSkill NewItem = new NonMaxedSkill()
+                {
+                    Key = skillKey,
+                    Name = skillObjectName,
+                    Level = (Skill.Level is int SkillLevel) ? SkillLevel : 0,
+                    IconId = iconId
+                };
+                
+                NonMaxedSkills.Add(NewItem);
             }
 
             if (abilityList is not null && HasMissingAbilities(skillObjectName, Skill, abilityList, UnknownSkill, sidebarOnly, out string MissingAbilities))
@@ -212,10 +243,14 @@ public class Character
 
         if (!IsFound)
         {
-            if (MissingSkills.Length > 0)
-                MissingSkills += ", ";
+            MissingSkill NewItem = new MissingSkill()
+            {
+                Key = skillKey,
+                Name = skillObjectName,
+                IconId = iconId
+            };
 
-            MissingSkills += skillObjectName;
+            MissingSkills.Add(NewItem);
         }
     }
 
