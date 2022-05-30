@@ -27,7 +27,7 @@ public partial class MainWindow
 
     private int SelectedCharacterIndexInternal = -1;
 
-    public override Character? CurrentCharacter
+    public override object? CurrentCharacter
     {
         get { return SelectedCharacterIndex >= 0 && SelectedCharacterIndex < CharacterList.Count ? CharacterList[SelectedCharacterIndex] : null; }
     }
@@ -45,7 +45,7 @@ public partial class MainWindow
         if (IsAnalyzingInternal != value)
         {
             IsAnalyzingInternal = value;
-            NotifyThisPropertyChanged();
+            NotifyPropertyChanged(nameof(IsAnalyzing));
         }
     }
 

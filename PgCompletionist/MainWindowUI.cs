@@ -31,7 +31,7 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     public abstract WpfObservableRangeCollection<Character> CharacterList { get; }
     public abstract int SelectedCharacterIndex { get; set; }
     public abstract string StatusText { get; }
-    public abstract Character? CurrentCharacter { get; }
+    public abstract object? CurrentCharacter { get; }
     #endregion
 
     #region Events
