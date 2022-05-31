@@ -16,6 +16,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
         <CommandBinding Command="{StaticResource DeleteCommand}" Executed="OnDelete"/>
+        <CommandBinding Command="{StaticResource ExpandCommand}" Executed="OnExpand"/>
     </Window.CommandBindings>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,10,10,0">

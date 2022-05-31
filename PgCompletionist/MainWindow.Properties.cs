@@ -6,7 +6,7 @@ public partial class MainWindow
 {
     public override string TitleText { get; }
     public override string StatusText { get; }
-    public override WpfObservableRangeCollection<Character> CharacterList { get; } = new();
+    public override WpfObservableRangeCollection<ObservableCharacter> CharacterList { get; } = new();
 
     public override int SelectedCharacterIndex
     {

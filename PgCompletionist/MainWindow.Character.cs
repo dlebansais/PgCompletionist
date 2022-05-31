@@ -4,16 +4,18 @@ public partial class MainWindow
 {
     private void AddCharacter(Character newCharacter)
     {
+        ObservableCharacter NewItem = new ObservableCharacter(newCharacter);
+
         for (int i = 0; i < CharacterList.Count; i++)
         
-            if (CharacterList[i].Name == newCharacter.Name)
+            if (CharacterList[i].Item.Name == newCharacter.Name)
             {
-                CharacterList[i] = newCharacter;
+                CharacterList[i] = NewItem;
                 SelectedCharacterIndex = i;
                 return;
             }
 
-        CharacterList.Add(newCharacter);
+        CharacterList.Add(NewItem);
         SelectedCharacterIndex = CharacterList.Count - 1;
     }
 }

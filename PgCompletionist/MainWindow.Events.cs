@@ -3,6 +3,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using WpfLayout;
 
@@ -36,7 +37,7 @@ public partial class MainWindow
 
     public override void OnDelete(object sender, ExecutedRoutedEventArgs args)
     {
-        if (args.OriginalSource is FrameworkElement Source && Source.DataContext is Character AsCharacter && CharacterList.Contains(AsCharacter))
+        if (args.OriginalSource is FrameworkElement Source && Source.DataContext is ObservableCharacter AsCharacter && CharacterList.Contains(AsCharacter))
         {
             int OldIndex = SelectedCharacterIndex;
 
@@ -47,6 +48,40 @@ public partial class MainWindow
                 SelectedCharacterIndex = OldIndex;
             else if (CharacterList.Count > 0)
                 SelectedCharacterIndex = CharacterList.Count - 1;
+        }
+    }
+
+    public override async void OnExpand(object sender, ExecutedRoutedEventArgs args)
+    {
+        if (args.OriginalSource is Hyperlink Source && Source.DataContext is IMoreToSee AsItem && CurrentCharacter is ObservableCharacter AsCharacter)
+        {
+            int MaxCount = int.MaxValue;
+
+            if (AsItem.MoreToSee >= ExpandTools.PerfLimit)
+            {
+                MessageBoxResult WarningResult = await DialogBox.Show("This is going to take like... forever. Are you sure?", "Large display delay", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                if (WarningResult != MessageBoxResult.OK)
+                    return;
+            }
+
+            switch (AsItem)
+            {
+                case MissingSkill:
+                    AsCharacter.ExpandMissingSkills(MaxCount);
+                    break;
+                case NonMaxedSkill:
+                    AsCharacter.ExpandNonMaxedSkills(MaxCount);
+                    break;
+                case ObservableMissingAbilitesBySkill:
+                    AsCharacter.ExpandMissingAbilitiesList(MaxCount);
+                    break;
+                case MissingAbility AsMissingAbility:
+                    AsCharacter.ExpandMissingAbility(AsMissingAbility, MaxCount);
+                    break;
+                case MissingRecipe:
+                    AsCharacter.ExpandMissingRecipes(MaxCount);
+                    break;
+            }
         }
     }
 }

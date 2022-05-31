@@ -13,7 +13,10 @@
         <localsel:NextOrLastNonMaxedSkillTemplateSelector x:Key="selNextOrLastNonMaxedSkillTemplate"/>
         <localsel:NextOrLastMissingAbilityTemplateSelector x:Key="selNextOrLastMissingAbilityTemplate"/>
         <localsel:NextOrLastMissingRecipeTemplateSelector x:Key="selNextOrLastMissingRecipeTemplate"/>
+        <localsel:NextOrLastMissingAbilitesBySkillTemplateSelector x:Key="selNextOrLastMissingAbilitesBySkillTemplate"/>
         <localconv:IdToImageSourceConverter x:Key="convIdToImageSource"/>
+        <localconv:CharacterToDetailsConverter x:Key="convCharacterToDetails"/>
+        <localconv:MoreToSeeConverter x:Key="convMoreToSee"/>
         <CompositeCollection x:Key="CollapsedVisible">
             <Visibility>Collapsed</Visibility>
             <Visibility>Visible</Visibility>
@@ -79,6 +82,7 @@
         <BitmapImage x:Key="imgDelete" UriSource="./Resources/delete.png"/>
         <RoutedCommand x:Key="AddReportCommand"/>
         <RoutedCommand x:Key="DeleteCommand"/>
+        <RoutedCommand x:Key="ExpandCommand"/>
         <DataTemplate x:Key="CharacterNameTemplate" DataType="{x:Type local:Character}">
             <TextBlock Text="{Binding Name}" FontSize="16"/>
         </DataTemplate>
@@ -93,7 +97,12 @@
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                <TextBlock Text="." FontSize="16"/>
+                <TextBlock Text="." FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}"/>
+                <TextBlock FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="NextNonMaxedSkillTemplate" DataType="{x:Type local:NonMaxedSkill}">
@@ -111,7 +120,13 @@
                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
                 <TextBlock Text="(Level" FontSize="16" Margin="5,0,5,0"/>
                 <TextBlock Text="{Binding Level}" FontSize="16" TextWrapping="Wrap"/>
-                <TextBlock Text=")." FontSize="16"/>
+                <TextBlock Text=")." FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}"/>
+                <TextBlock Text=")" FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}"/>
+                <TextBlock FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="NextMissingAbilityTemplate" DataType="{x:Type local:MissingAbility}">
@@ -125,16 +140,36 @@
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
-                <TextBlock Text="." FontSize="16"/>
+                <TextBlock Text="." FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}"/>
+                <TextBlock FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="MissingAbilitiesTemplate" DataType="{x:Type local:MissingAbilitesBySkill}">
+        <DataTemplate x:Key="NextMissingAbilitiesTemplate" DataType="{x:Type local:MissingAbilitesBySkill}">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <Image Source="{Binding SkillIconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding SkillName}" FontSize="16" TextWrapping="Wrap"/>
                     <TextBlock Text=":" FontSize="16"/>
                 </StackPanel>
+                <ItemsControl ItemsSource="{Binding MissingAbilities}" ItemTemplateSelector="{StaticResource selNextOrLastMissingAbilityTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="20,5,0,0"/>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastMissingAbilitiesTemplate" DataType="{x:Type local:MissingAbilitesBySkill}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Image Source="{Binding SkillIconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding SkillName}" FontSize="16" TextWrapping="Wrap"/>
+                    <TextBlock Text=":" FontSize="16"/>
+                </StackPanel>
+                <TextBlock DockPanel.Dock="Bottom" FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
                 <ItemsControl ItemsSource="{Binding MissingAbilities}" ItemTemplateSelector="{StaticResource selNextOrLastMissingAbilityTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="20,5,0,0"/>
             </DockPanel>
         </DataTemplate>
@@ -153,10 +188,16 @@
                 <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
                 <TextBlock Text="(From" FontSize="16" Margin="5,0,5,0"/>
                 <TextBlock Text="{Binding Sources}" FontSize="16" TextWrapping="Wrap"/>
-                <TextBlock Text=")." FontSize="16"/>
+                <TextBlock Text=")." FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}"/>
+                <TextBlock Text=")" FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}"/>
+                <TextBlock FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:Character}">
+        <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:ObservableCharacter}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -169,21 +210,22 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Button Grid.Column="0" Grid.Row="0" Command="{StaticResource DeleteCommand}" Background="Transparent" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Right">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                    </Button.Style>
+                    <Image Source="{StaticResource imgDelete}" Opacity="{Binding IsEnabled, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource DisabledNormal}, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Width="16" Height="16" Margin="2"/>
+                </Button>
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="5,0,0,0">
                     <TextBlock Text="{Binding Name}" FontSize="32"/>
-                    <Button Command="{StaticResource DeleteCommand}" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Margin="10,0,0,0">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                        </Button.Style>
-                        <Image Source="{StaticResource imgDelete}" Opacity="{Binding IsEnabled, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource DisabledNormal}, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Width="16" Height="16" Margin="2"/>
-                    </Button>
+                    <TextBlock Text="{Binding Converter={StaticResource convCharacterToDetails}}" FontSize="32" Margin="10,0,0,0"/>
                 </StackPanel>
                 <TextBlock Grid.Column="0" Grid.Row="1" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Skills:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding MissingSkills}" ItemTemplateSelector="{StaticResource selNextOrLastMissingSkillTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="2" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Non-maxed Skills:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="2" ItemsSource="{Binding NonMaxedSkills}" ItemTemplateSelector="{StaticResource selNextOrLastNonMaxedSkillTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="3" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Abilities:</TextBlock>
-                <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplate="{StaticResource MissingAbilitiesTemplate}" Margin="5,5,0,0"/>
+                <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplateSelector="{StaticResource selNextOrLastMissingAbilitesBySkillTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="4" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Recipes:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="4" ItemsSource="{Binding MissingRecipes}" ItemTemplateSelector="{StaticResource selNextOrLastMissingRecipeTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
             </Grid>

@@ -1,11 +1,14 @@
 ﻿namespace PgCompletionist;
 
-public class NonMaxedSkill
+public class NonMaxedSkill : IMoreToSee
 {
     public string Key { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public int Level { get; set; }
     public int IconId { get; set; }
+
+    public bool HasMore { get { return MoreToSee > 0; } }
+    public int MoreToSee { get; set; }
 
     public override string ToString()
     {

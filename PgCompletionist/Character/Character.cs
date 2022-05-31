@@ -2,7 +2,6 @@
 
 using PgObjects;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -24,7 +23,9 @@ public class Character
     public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
     public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
     public List<MissingRecipe> MissingRecipes { get; set; } = new();
-    public bool IsFairy { get; set; }
+    public bool IsFae { get; set; }
+    public bool IsOrc { get; set; }
+    public bool IsDwarf { get; set; }
     public bool IsLycanthrope { get; set; }
     public bool IsDruid { get; set; }
 
@@ -33,16 +34,6 @@ public class Character
         UpdateFlags(report);
         UpdateSkillsAndAbilities(report);
         UpdateRecipes(report);
-
-        /*
-        Debug.WriteLine($"  Missing Skills: {MissingSkills}");
-        Debug.WriteLine($"Non-maxed Skills: {NonMaxedSkills}");
-
-        foreach (string Item in MissingAbilitiesList)
-            Debug.WriteLine(Item);
-
-        Debug.WriteLine($" Missing Recipes: {MissingRecipes}");
-        */
     }
 
     private void UpdateFlags(CharacterReport report)
@@ -70,6 +61,13 @@ public class Character
                     }
                 }
             }
+        }
+
+        if (report.Race is Race CharacterRace)
+        {
+            IsFae = CharacterRace == Race.Fae;
+            IsOrc = CharacterRace == Race.Orc;
+            IsDwarf = CharacterRace == Race.Dwarf;
         }
     }
 
@@ -165,7 +163,7 @@ public class Character
         if (pgAbility.AbilityGroup_Key is string AbilityGroupKey)
         {
             PgAbility AbilityGroup = AbilityObjects.Get(AbilityGroupKey);
-            if (AbilityGroup.InternalName == "RangedSlice1" && !IsFairy)
+            if (AbilityGroup.InternalName == "RangedSlice1" && !IsFae)
                 return true;
         }
 
@@ -184,32 +182,9 @@ public class Character
         if (!IsDruid && skillKey == "Druid")
             return true;
 
-        if (!IsFairy && (skillKey == "Race_Fae" || skillKey == "FairyMagic"))
+        if (!IsFae && (skillKey == "Race_Fae" || skillKey == "FairyMagic"))
             return true;
 
-        return false;
-    }
-
-    private bool SkillObjectNameToKey(string skillObjectName, out string skillKey, out string skillName)
-    {
-        Dictionary<string, string> SkillNamesTable = Groups.SkillNamesTable;
-
-        foreach (KeyValuePair<string, string> Entry in SkillNamesTable)
-        {
-            string Name = Entry.Value;
-            if (Name.Length == 0)
-                Name = Entry.Key;
-
-            if (skillObjectName == Name)
-            {
-                skillKey = Entry.Key;
-                skillName = Name;
-                return true;
-            }
-        }
-
-        skillKey = string.Empty;
-        skillName = string.Empty;
         return false;
     }
 
@@ -333,7 +308,7 @@ public class Character
             if (!IsDruid && PgRecipe.KeywordList.Contains(RecipeKeyword.StorageCrateDruid))
                 continue;
 
-            if (!IsFairy && IsFairyOnlyRecipe(PgRecipe))
+            if (!IsFae && IsFairyOnlyRecipe(PgRecipe))
                 continue;
 
             if (IsRecipeMissing(PgRecipe, KnownRecipeNameList))
@@ -416,9 +391,11 @@ public class Character
         switch (pgSource)
         {
             case PgSourceAutomaticFromSkill AsAutomaticFromSkill:
-                return $"skillup in {SkillObjects.Get(AsAutomaticFromSkill.Skill_Key!).Name}";
+                PgSkill? FromSkill = AsAutomaticFromSkill.Skill_Key is not null ? SkillObjects.Get(AsAutomaticFromSkill.Skill_Key) : null;
+                return $"skillup in {FromSkill?.ObjectName}";
             case PgSourceEffect AsEffect:
-                return $"effect {EffectObjects.Get(AsEffect.Effect_Key!).Name}";
+                PgEffect? FromEffect = AsEffect.Effect_Key is not null ? EffectObjects.Get(AsEffect.Effect_Key) : null;
+                return $"effect {FromEffect?.ObjectName}";
             case PgSourceGift AsGift:
                 return $"gift to {NpcName(AsGift.Npc)}";
             case PgSourceHangOut AsHangOut:
@@ -426,15 +403,17 @@ public class Character
             case PgSourceItem AsItem:
                 PgItem Item = ItemObjects.Get(AsItem.Item_Key!);
                 if (Item.KeywordTable.ContainsKey(ItemKeyword.Scroll) || Item.KeywordTable.ContainsKey(ItemKeyword.Document))
-                    return $"using scroll {Item.Name}";
+                    return $"using scroll '{Item.Name}'";
                 else
-                    return $"using {Item.Name}";
+                    return $"using '{Item.Name}'";
             case PgSourceLearnAbility:
-                return "laerning ability";
+                return "learning ability";
             case PgSourceQuest AsQuest:
-                return $"quest {QuestObjects.Get(AsQuest.Quest_Key!).Name}";
+                PgQuest? FromQuest = AsQuest.Quest_Key is not null ? QuestObjects.Get(AsQuest.Quest_Key) : null;
+                return $"quest '{FromQuest?.Name}'";
             case PgSourceRecipe AsRecipe:
-                return $"recipe {RecipeObjects.Get(AsRecipe.Recipe_Key!).Name}";
+                PgRecipe? FromRecipe = AsRecipe.Recipe_Key is not null ? RecipeObjects.Get(AsRecipe.Recipe_Key) : null;
+                return $"recipe '{FromRecipe?.Name}'";
             case PgSourceTraining AsTraining:
                 return $"training with {NpcName(AsTraining.Npc)}";
             default:
