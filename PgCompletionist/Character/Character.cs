@@ -23,6 +23,9 @@ public class Character
     public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
     public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
     public List<MissingRecipe> MissingRecipes { get; set; } = new();
+    public bool IsHuman { get; set; }
+    public bool IsElf { get; set; }
+    public bool IsRakshasa { get; set; }
     public bool IsFae { get; set; }
     public bool IsOrc { get; set; }
     public bool IsDwarf { get; set; }
@@ -65,6 +68,9 @@ public class Character
 
         if (report.Race is Race CharacterRace)
         {
+            IsHuman = CharacterRace == Race.Human;
+            IsElf = CharacterRace == Race.Elf;
+            IsRakshasa = CharacterRace == Race.Rakshasa;
             IsFae = CharacterRace == Race.Fae;
             IsOrc = CharacterRace == Race.Orc;
             IsDwarf = CharacterRace == Race.Dwarf;

@@ -51,5 +51,23 @@ public partial class MainWindow
         return true;
     }
 
-    private string ReportFolder = string.Empty;
+    private void AddCharacter(Character newCharacter)
+    {
+        ObservableCharacter NewItem = new ObservableCharacter(newCharacter);
+
+        for (int i = 0; i < CharacterList.Count; i++)
+
+            if (CharacterList[i].Item.Name == newCharacter.Name)
+            {
+                CharacterList[i] = NewItem;
+                SelectedCharacterIndex = i;
+                return;
+            }
+
+        SelectedCharacterIndex = -1;
+
+        CharacterList.Add(NewItem);
+
+        SelectedCharacterIndex = CharacterList.Count - 1;
+    }
 }

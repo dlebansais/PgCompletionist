@@ -14,6 +14,9 @@ public class CharacterToDetailsConverter : IValueConverter
 
         if (value is ObservableCharacter AsCharacter)
         {
+            Result = AddDetail(Result, AsCharacter.IsHuman, "Human");
+            Result = AddDetail(Result, AsCharacter.IsElf, "Elf");
+            Result = AddDetail(Result, AsCharacter.IsRakshasa, "Rakshasa");
             Result = AddDetail(Result, AsCharacter.IsFae, "Fae");
             Result = AddDetail(Result, AsCharacter.IsOrc, "Orc");
             Result = AddDetail(Result, AsCharacter.IsDwarf, "Dwarf");

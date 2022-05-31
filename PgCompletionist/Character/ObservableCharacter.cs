@@ -16,6 +16,9 @@ public class ObservableCharacter
     public Character Item { get; }
 
     public string Name { get { return Item.Name; } }
+    public bool IsHuman { get { return Item.IsHuman; } }
+    public bool IsElf { get { return Item.IsElf; } }
+    public bool IsRakshasa { get { return Item.IsRakshasa; } }
     public bool IsFae { get { return Item.IsFae; } }
     public bool IsOrc { get { return Item.IsOrc; } }
     public bool IsDwarf { get { return Item.IsDwarf; } }

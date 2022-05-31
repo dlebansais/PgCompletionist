@@ -79,7 +79,7 @@
             <sys:Boolean>True</sys:Boolean>
             <sys:Boolean>False</sys:Boolean>
         </CompositeCollection>
-        <BitmapImage x:Key="imgDelete" UriSource="./Resources/delete.png"/>
+        <BitmapImage x:Key="imgDelete" UriSource="/PgCompletionist;component/Resources/delete.png"/>
         <RoutedCommand x:Key="AddReportCommand"/>
         <RoutedCommand x:Key="DeleteCommand"/>
         <RoutedCommand x:Key="ExpandCommand"/>

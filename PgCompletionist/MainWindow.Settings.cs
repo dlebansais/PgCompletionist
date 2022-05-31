@@ -1,5 +1,6 @@
 ﻿namespace PgCompletionist;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -26,10 +27,27 @@ public partial class MainWindow
             foreach (Character Character in Settings.CharacterList)
                 NewList.Add(new ObservableCharacter(Character));
 
+            NewList.Sort(SortByName);
             CharacterList.ReplaceRange(NewList);
-            int Index = Settings.SelectedCharacterIndex;
-            SelectedCharacterIndex = Index >= 0 && Index < CharacterList.Count ? Index : -1;
+
+            int Index = CharacterList.Count > 0 ? 0 : -1;
+            if (Settings.SelectedCharacter is string SelectedCharacter)
+            {
+                for (int i = 0; i < CharacterList.Count; i++)
+                    if (CharacterList[i].Name == SelectedCharacter)
+                    {
+                        Index = i;
+                        break;
+                    }
+            }
+
+            TaskDispatcher.Dispatch(() => SelectedCharacterIndex = Index);
         }
+    }
+
+    private static int SortByName(ObservableCharacter item1, ObservableCharacter item2)
+    {
+        return string.Compare(item1.Name, item2.Name, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private async Task SaveSettings()
@@ -37,7 +55,8 @@ public partial class MainWindow
         Settings Settings = new();
         foreach (ObservableCharacter Character in CharacterList)
             Settings.CharacterList.Add(Character.Item);
-        Settings.SelectedCharacterIndex = SelectedCharacterIndex;
+
+        Settings.SelectedCharacter = (CurrentCharacter as ObservableCharacter)?.Name;
 
         await LocalStorage.SetItemAsync<Settings>(SettingsName, Settings);
     }
