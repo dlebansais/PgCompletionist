@@ -30,7 +30,7 @@
         <Border DockPanel.Dock="Bottom" BorderBrush="DarkGray" BorderThickness="0,1,0,0">
             <TextBlock Text="{Binding StatusText}" FontSize="16" Margin="10,5,10,5"/>
         </Border>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10" Visibility="{Binding IsCharacterSelected, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsCharacterSelected, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="10">
             <ContentControl Content="{Binding CurrentCharacter}" ContentTemplate="{StaticResource CharacterTemplate}" VerticalAlignment="Top"/>
         </ScrollViewer>
     </DockPanel>
