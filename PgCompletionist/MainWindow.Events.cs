@@ -33,4 +33,20 @@ public partial class MainWindow
         await Task.Run(() => ParseFile(fileName, content));
         SetIsAnalyzing(false);
     }
+
+    public override void OnDelete(object sender, ExecutedRoutedEventArgs args)
+    {
+        if (args.OriginalSource is FrameworkElement Source && Source.DataContext is Character AsCharacter && CharacterList.Contains(AsCharacter))
+        {
+            int OldIndex = SelectedCharacterIndex;
+
+            SelectedCharacterIndex = -1;
+            CharacterList.Remove(AsCharacter);
+
+            if (OldIndex < CharacterList.Count)
+                SelectedCharacterIndex = OldIndex;
+            else if (CharacterList.Count > 0)
+                SelectedCharacterIndex = CharacterList.Count - 1;
+        }
+    }
 }

@@ -36,6 +36,7 @@
 	<None Remove="Resources\mainicon.p" />
 	<None Remove="Resources\main.ico" />
 	<None Remove="Resources\main.png" />
+	<None Remove="Resources\delete.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,7 @@
 	<Resource Include="Resources\mainicon.p" />
 	<Resource Include="Resources\main.ico" />
 	<Resource Include="Resources\main.png" />
+	<Resource Include="Resources\delete.png" />
   </ItemGroup>
 
   <ItemGroup>

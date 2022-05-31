@@ -20,6 +20,7 @@ public partial class MainWindow
             {
                 SelectedCharacterIndexInternal = value;
                 NotifyThisPropertyChanged();
+                NotifyPropertyChanged(nameof(IsCharacterSelected));
                 NotifyPropertyChanged(nameof(CurrentCharacter));
             }
         }
@@ -27,9 +28,14 @@ public partial class MainWindow
 
     private int SelectedCharacterIndexInternal = -1;
 
+    public override bool IsCharacterSelected
+    {
+        get { return SelectedCharacterIndex >= 0 && SelectedCharacterIndex < CharacterList.Count; }
+    }
+
     public override object? CurrentCharacter
     {
-        get { return SelectedCharacterIndex >= 0 && SelectedCharacterIndex < CharacterList.Count ? CharacterList[SelectedCharacterIndex] : null; }
+        get { return IsCharacterSelected ? CharacterList[SelectedCharacterIndex] : null; }
     }
 
     public override bool IsAnalyzing

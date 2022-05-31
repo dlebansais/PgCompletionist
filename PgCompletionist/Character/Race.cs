@@ -5,7 +5,7 @@ public enum Race
     Human,
     Elf,
     Rakshasa,
-    Fairy,
+    Fae,
     Orc,
     Dwarf
 }

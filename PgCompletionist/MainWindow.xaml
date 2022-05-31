@@ -15,6 +15,7 @@
         Title="{Binding TitleText}">
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
+        <CommandBinding Command="{StaticResource DeleteCommand}" Executed="OnDelete"/>
     </Window.CommandBindings>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,10,10,0">
@@ -27,8 +28,8 @@
         <Border DockPanel.Dock="Bottom" BorderBrush="DarkGray" BorderThickness="0,1,0,0">
             <TextBlock Text="{Binding StatusText}" FontSize="16" Margin="10,5,10,5"/>
         </Border>
-        <Grid VerticalAlignment="Top" Margin="10">
-            <ContentControl Content="{Binding CurrentCharacter}" ContentTemplate="{StaticResource CharacterTemplate}"/>
-        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Margin="10">
+            <ContentControl Content="{Binding CurrentCharacter}" ContentTemplate="{StaticResource CharacterTemplate}" Visibility="{Binding IsCharacterSelected, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}"/>
+        </ScrollViewer>
     </DockPanel>
 </Window>

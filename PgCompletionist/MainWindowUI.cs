@@ -31,6 +31,7 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     public abstract WpfObservableRangeCollection<Character> CharacterList { get; }
     public abstract int SelectedCharacterIndex { get; set; }
     public abstract string StatusText { get; }
+    public abstract bool IsCharacterSelected { get; }
     public abstract object? CurrentCharacter { get; }
     #endregion
 
@@ -38,6 +39,7 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     public abstract void OnMainWindowLoaded(object sender, RoutedEventArgs e);
     public abstract void OnMainWindowClosing(object sender, CancelEventArgs e);
     public abstract void OnAddReport(object sender, ExecutedRoutedEventArgs e);
+    public abstract void OnDelete(object sender, ExecutedRoutedEventArgs e);
     #endregion
 
     #region Storage
