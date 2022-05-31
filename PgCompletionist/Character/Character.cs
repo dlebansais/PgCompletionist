@@ -1,7 +1,9 @@
 ﻿namespace PgCompletionist;
 
 using PgObjects;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -19,10 +21,6 @@ public class Character
     }
 
     public string Name { get; set; } = string.Empty;
-    public List<MissingSkill> MissingSkills { get; set; } = new();
-    public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
-    public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
-    public List<MissingRecipe> MissingRecipes { get; set; } = new();
     public bool IsHuman { get; set; }
     public bool IsElf { get; set; }
     public bool IsRakshasa { get; set; }
@@ -31,6 +29,12 @@ public class Character
     public bool IsDwarf { get; set; }
     public bool IsLycanthrope { get; set; }
     public bool IsDruid { get; set; }
+    public List<MissingSkill> MissingSkills { get; set; } = new();
+    public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
+    public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
+    public List<MissingRecipe> MissingRecipes { get; set; } = new();
+    public DateTime LastGourmandReportTime { get; set; } = DateTime.MinValue;
+    public List<NeverEatenFood> NeverEatenFoods { get; set; } = new();
 
     private void Update(CharacterReport report)
     {
@@ -105,6 +109,7 @@ public class Character
         MissingSkills = new();
         NonMaxedSkills = new();
         MissingAbilitiesList.Clear();
+        NeverEatenFoods = new();
 
         List<PgAbility> UnobtainableAbilityList = new();
 
@@ -440,5 +445,55 @@ public class Character
             return TextMaps.SpecialNpcTextMap[location.NpcEnum];
         else
             return "unknown NPC";
+    }
+
+    public void UpdateGourmand(DateTime reportTime, string content)
+    {
+        string CleanContent = content;
+        CleanContent = CleanContent.Replace("\r", string.Empty);
+        CleanContent = CleanContent.Replace(" (HAS DAIRY)", string.Empty);
+        CleanContent = CleanContent.Replace(" (HAS MEAT)", string.Empty);
+        CleanContent = CleanContent.Replace(" (HAS EGGS)", string.Empty);
+
+        string[] Lines = CleanContent.Split('\n');
+        if (Lines.Length < 2 || Lines[0].Trim() != "Foods Consumed:" || Lines[1].Trim().Length > 0)
+            return;
+
+        List<string> ConsumedFoodList = new();
+        for (int i = 2; i < Lines.Length; i++)
+        {
+            string Line = Lines[i];
+            string[] Parts = Line.Split(':');
+
+            if (Parts.Length == 2 && int.TryParse(Parts[1].Trim(), out int ConsumedCount))
+            {
+                string FoodName = Parts[0].Trim();
+                ConsumedFoodList.Add(FoodName);
+            }
+        }
+
+        List<string> NeverEatenNameList = new(Groups.FoodItemsTable.Keys);
+
+        foreach (string ItemName in ConsumedFoodList)
+        {
+            if (Groups.FoodItemsTable.ContainsKey(ItemName))
+                NeverEatenNameList.Remove(ItemName);
+            else
+                Debug.WriteLine($"Not found: {ItemName}");
+        }
+
+        NeverEatenFoods.Clear();
+
+        foreach (string ItemName in NeverEatenNameList)
+        {
+            string ItemKey = Groups.FoodItemsTable[ItemName];
+            if (ItemObjects.Get(ItemKey) is PgItem FoodItem)
+            {
+                NeverEatenFood NewItem = new NeverEatenFood() { Key = ItemKey, Name = ItemName, IconId = FoodItem.IconId };
+                NeverEatenFoods.Add(NewItem);
+            }
+        }
+
+        LastGourmandReportTime = reportTime;
     }
 }

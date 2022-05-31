@@ -1,8 +1,11 @@
 ﻿namespace PgCompletionist;
 
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Data;
 
-public class ObservableCharacter
+public class ObservableCharacter : INotifyPropertyChanged
 {
     public ObservableCharacter(Character item)
     {
@@ -11,6 +14,7 @@ public class ObservableCharacter
         ExpandNonMaxedSkills(ExpandTools.ExpandLimit);
         ExpandMissingAbilitiesList(ExpandTools.ExpandLimit);
         ExpandMissingRecipes(ExpandTools.ExpandLimit);
+        ExpandNeverEatenFoods(ExpandTools.ExpandLimit);
     }
 
     public Character Item { get; }
@@ -24,37 +28,23 @@ public class ObservableCharacter
     public bool IsDwarf { get { return Item.IsDwarf; } }
     public bool IsLycanthrope { get { return Item.IsLycanthrope; } }
     public bool IsDruid { get { return Item.IsDruid; } }
-
-    public bool IsMissingSkillsExpanded
-    {
-        get { return MissingSkills.Count == Item.MissingSkills.Count; }
-    }
-
     public WpfObservableRangeCollection<MissingSkill> MissingSkills { get; } = new();
+    public WpfObservableRangeCollection<NonMaxedSkill> NonMaxedSkills { get; } = new();
+    public WpfObservableRangeCollection<ObservableMissingAbilitesBySkill> MissingAbilitiesList { get; } = new();
+    public WpfObservableRangeCollection<MissingRecipe> MissingRecipes { get; } = new();
+    public bool IsNeverEatenFoodKnown { get { return Item.LastGourmandReportTime != DateTime.MinValue; } }
+    public DateTime LastGourmandReportTime { get { return Item.LastGourmandReportTime; } }
+    public WpfObservableRangeCollection<NeverEatenFood> NeverEatenFoods { get; } = new();
 
     public void ExpandMissingSkills(int maxCount)
     {
         ExpandTools.Expand(Item.MissingSkills, MissingSkills, maxCount, (MissingSkill item) => item);
     }
 
-    public bool IsNonMaxedSkillsExpanded
-    {
-        get { return NonMaxedSkills.Count == Item.NonMaxedSkills.Count; }
-    }
-
-    public WpfObservableRangeCollection<NonMaxedSkill> NonMaxedSkills { get; } = new();
-
     public void ExpandNonMaxedSkills(int maxCount)
     {
         ExpandTools.Expand(Item.NonMaxedSkills, NonMaxedSkills, maxCount, (NonMaxedSkill item) => item);
     }
-
-    public bool IsMissingAbilitiesListExpanded
-    {
-        get { return MissingAbilitiesList.Count == Item.MissingAbilitiesList.Count; }
-    }
-
-    public WpfObservableRangeCollection<ObservableMissingAbilitesBySkill> MissingAbilitiesList { get; } = new();
 
     public void ExpandMissingAbilitiesList(int maxCount)
     {
@@ -68,15 +58,40 @@ public class ObservableCharacter
                 Item.ExpandMissingAbilities(maxCount);
     }
 
-    public bool IsMissingRecipesExpanded
-    {
-        get { return MissingRecipes.Count == Item.MissingRecipes.Count; }
-    }
-
-    public WpfObservableRangeCollection<MissingRecipe> MissingRecipes { get; } = new();
-
     public void ExpandMissingRecipes(int maxCount)
     {
         ExpandTools.Expand(Item.MissingRecipes, MissingRecipes, maxCount, (MissingRecipe item) => item);
     }
+
+    public void UpdateGourmand(bool isExpanded)
+    {
+        NeverEatenFoods.Clear();
+        ExpandNeverEatenFoods(isExpanded ? int.MaxValue : ExpandTools.ExpandLimit);
+
+        NotifyPropertyChanged(nameof(IsNeverEatenFoodKnown));
+    }
+
+    public void ExpandNeverEatenFoods(int maxCount)
+    {
+        ExpandTools.Expand(Item.NeverEatenFoods, NeverEatenFoods, maxCount, (NeverEatenFood item) => item);
+    }
+
+    #region Implementation of INotifyPropertyChanged
+    /// <summary>
+    /// Implements the PropertyChanged event.
+    /// </summary>
+#nullable disable annotations
+    public event PropertyChangedEventHandler PropertyChanged;
+#nullable restore annotations
+
+    internal void NotifyPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal void NotifyThisPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    #endregion
 }

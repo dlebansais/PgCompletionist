@@ -1,5 +1,6 @@
 ﻿namespace PgCompletionist;
 
+using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -7,7 +8,7 @@ using System.Text.Json.Serialization;
 
 public partial class MainWindow
 {
-    private void ParseFile(string fileName, string content)
+    private void ParseReportFile(string fileName, string content)
     {
         string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
@@ -69,5 +70,33 @@ public partial class MainWindow
         CharacterList.Add(NewItem);
 
         SelectedCharacterIndex = CharacterList.Count - 1;
+    }
+
+    private void ParseGourmandFile(string fileName, string content)
+    {
+        string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        string[] FileNameParts = FileNameWithoutExtension.Split('_');
+        
+        if (FileNameParts.Length == 3)
+        {
+            string DateString = FileNameParts[1];
+            string TimeString = FileNameParts[2];
+
+            if (DateString.Length == 6 && TimeString.Length == 6)
+            {
+                if ((int.TryParse(DateString.Substring(0, 2), out int Year) && int.TryParse(DateString.Substring(2, 2), out int Month) && int.TryParse(DateString.Substring(4, 2), out int Day)) &&
+                    (int.TryParse(TimeString.Substring(0, 2), out int Hour) && int.TryParse(TimeString.Substring(2, 2), out int Minute) && int.TryParse(TimeString.Substring(4, 2), out int Second)))
+                {
+                    DateTime ReportTime = new DateTime(2000 + Year, Month, Day, Hour, Minute, Second, DateTimeKind.Local);
+
+                    if (CurrentCharacter is ObservableCharacter AsCharacter)
+                    {
+                        bool IsExpanded = AsCharacter.NeverEatenFoods.Count > 0 && AsCharacter.NeverEatenFoods.Count == AsCharacter.Item.NeverEatenFoods.Count;
+                        AsCharacter.Item.UpdateGourmand(ReportTime, content);
+                        TaskDispatcher.Dispatch(() => AsCharacter.UpdateGourmand(IsExpanded));
+                    }
+                }
+            }
+        }
     }
 }

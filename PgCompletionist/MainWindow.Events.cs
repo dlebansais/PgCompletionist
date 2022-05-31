@@ -31,7 +31,7 @@ public partial class MainWindow
 
     private async Task ExecuteAddReport(string fileName, string content)
     {
-        await Task.Run(() => ParseFile(fileName, content));
+        await Task.Run(() => ParseReportFile(fileName, content));
         SetIsAnalyzing(false);
     }
 
@@ -81,7 +81,26 @@ public partial class MainWindow
                 case MissingRecipe:
                     AsCharacter.ExpandMissingRecipes(MaxCount);
                     break;
+                case NeverEatenFood:
+                    AsCharacter.ExpandNeverEatenFoods(MaxCount);
+                    break;
             }
         }
+    }
+
+    public override void OnAddGourmand(object sender, ExecutedRoutedEventArgs args)
+    {
+        FileDialogResult Result = (FileDialogResult)args.Parameter;
+        if (Result.FilePath.Length > 0)
+        {
+            SetIsAnalyzing(true);
+            TaskDispatcher.Dispatch(() => ExecuteAddGourmand(Result.FilePath, Result.Content));
+        }
+    }
+
+    private async Task ExecuteAddGourmand(string fileName, string content)
+    {
+        await Task.Run(() => ParseGourmandFile(fileName, content));
+        SetIsAnalyzing(false);
     }
 }

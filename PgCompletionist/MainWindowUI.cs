@@ -41,6 +41,7 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     public abstract void OnAddReport(object sender, ExecutedRoutedEventArgs e);
     public abstract void OnDelete(object sender, ExecutedRoutedEventArgs e);
     public abstract void OnExpand(object sender, ExecutedRoutedEventArgs e);
+    public abstract void OnAddGourmand(object sender, ExecutedRoutedEventArgs e);
     #endregion
 
     #region Storage

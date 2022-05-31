@@ -4,6 +4,7 @@
              xmlns:conv="clr-namespace:Converters;assembly=XamlConverterLibrary"
              xmlns:localsel="clr-namespace:Selectors"
              xmlns:localconv="clr-namespace:Converters"
+             xmlns:wpflayout="clr-namespace:WpfLayout;assembly=WpfLayout.Wpf"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:PgCompletionist"
              Startup="OnStartup">
@@ -14,6 +15,7 @@
         <localsel:NextOrLastMissingAbilityTemplateSelector x:Key="selNextOrLastMissingAbilityTemplate"/>
         <localsel:NextOrLastMissingRecipeTemplateSelector x:Key="selNextOrLastMissingRecipeTemplate"/>
         <localsel:NextOrLastMissingAbilitesBySkillTemplateSelector x:Key="selNextOrLastMissingAbilitesBySkillTemplate"/>
+        <localsel:NextOrLastNeverEatenFoodTemplateSelector x:Key="selNextOrLastNeverEatenFoodTemplate"/>
         <localconv:IdToImageSourceConverter x:Key="convIdToImageSource"/>
         <localconv:CharacterToDetailsConverter x:Key="convCharacterToDetails"/>
         <localconv:MoreToSeeConverter x:Key="convMoreToSee"/>
@@ -83,6 +85,7 @@
         <RoutedCommand x:Key="AddReportCommand"/>
         <RoutedCommand x:Key="DeleteCommand"/>
         <RoutedCommand x:Key="ExpandCommand"/>
+        <RoutedCommand x:Key="AddGourmandCommand"/>
         <DataTemplate x:Key="CharacterNameTemplate" DataType="{x:Type local:Character}">
             <TextBlock Text="{Binding Name}" FontSize="16"/>
         </DataTemplate>
@@ -197,6 +200,25 @@
                 </TextBlock>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="NextNeverEatenFoodTemplate" DataType="{x:Type local:NeverEatenFood}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="," FontSize="16" Margin="0,0,5,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LastNeverEatenFoodTemplate" DataType="{x:Type local:NeverEatenFood}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconId, Converter={StaticResource convIdToImageSource}}" Width="16" Height="16" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock Text="." FontSize="16" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}"/>
+                <TextBlock FontSize="16" TextWrapping="NoWrap" Visibility="{Binding HasMore, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,0,0,0">
+                    <Hyperlink Command="{StaticResource ExpandCommand}" NavigateUri="unused">
+                        <Run Text="{Binding Converter={StaticResource convMoreToSee}, Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="CharacterTemplate" DataType="{x:Type local:ObservableCharacter}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -204,6 +226,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -228,6 +252,10 @@
                 <ItemsControl Grid.Column="1" Grid.Row="3" ItemsSource="{Binding MissingAbilitiesList}" ItemTemplateSelector="{StaticResource selNextOrLastMissingAbilitesBySkillTemplate}" Margin="5,5,0,0"/>
                 <TextBlock Grid.Column="0" Grid.Row="4" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Missing Recipes:</TextBlock>
                 <ItemsControl Grid.Column="1" Grid.Row="4" ItemsSource="{Binding MissingRecipes}" ItemTemplateSelector="{StaticResource selNextOrLastMissingRecipeTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Margin="5,5,0,0"/>
+                <Button Grid.Column="1" Grid.Row="5" Command="{StaticResource AddGourmandCommand}" Content="Add Gourmand..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="Skill Report (*.txt)|*.txt" wpflayout:FileDialogButton.InitialDirectory="A520A1A4-1780-4FF6-BD18-167343C5AF16/Elder Game/Project Gorgon/Books" FontSize="16" Width="140" Height="26" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+                <TextBlock Grid.Column="0" Grid.Row="6" FontSize="16" TextAlignment="Right" Margin="0,5,0,0">Never-eaten Food:</TextBlock>
+                <ItemsControl Grid.Column="1" Grid.Row="6" ItemsSource="{Binding NeverEatenFoods}" ItemTemplateSelector="{StaticResource selNextOrLastNeverEatenFoodTemplate}" ItemsPanel="{StaticResource HorizontalWrapPanelTemplate}" Visibility="{Binding IsNeverEatenFoodKnown, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="5,5,0,0"/>
+                <TextBlock Grid.Column="1" Grid.Row="6" FontSize="16" Visibility="{Binding IsNeverEatenFoodKnown, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource VisibleCollapsed}}" Margin="5,5,0,0">No Gourmand report parsed yet.</TextBlock>
             </Grid>
         </DataTemplate>
     </Application.Resources>

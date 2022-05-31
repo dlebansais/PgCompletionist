@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:PgCompletionist"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
-        MinWidth="1100"
+        MinWidth="1120"
         MinHeight="600"
         Icon="./Resources/main.png"
         Loaded="OnMainWindowLoaded"
@@ -17,12 +17,13 @@
         <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
         <CommandBinding Command="{StaticResource DeleteCommand}" Executed="OnDelete"/>
         <CommandBinding Command="{StaticResource ExpandCommand}" Executed="OnExpand"/>
+        <CommandBinding Command="{StaticResource AddGourmandCommand}" Executed="OnAddGourmand"/>
     </Window.CommandBindings>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,10,10,0">
             <TextBlock FontSize="16" VerticalAlignment="Center">Select a character:</TextBlock>
             <ComboBox ItemsSource="{Binding CharacterList}" SelectedIndex="{Binding SelectedCharacterIndex}" ItemTemplate="{StaticResource CharacterNameTemplate}" ItemContainerStyle="{StaticResource ComboBoxItemStretch}" IsReadOnly="True" HorizontalContentAlignment="Stretch" FontSize="16" IsEnabled="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}" VerticalAlignment="Center" Width="150" Margin="5,0,0,0"/>
-            <Button Command="{StaticResource AddReportCommand}" Content="Add Report..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="VIP Report (*.json)|*.json" wpflayout:FileDialogButton.InitialDirectory="A520A1A4-1780-4FF6-BD18-167343C5AF16/Elder Game/Project Gorgon/Reports" FontSize="16" Width="120" Height="26" IsEnabled="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}" VerticalAlignment="Center" Margin="10,0,10,0"/>
+            <Button Command="{StaticResource AddReportCommand}" Content="Add Report..." wpflayout:FileDialogButton.Mode="Open" wpflayout:FileDialogButton.Filter="VIP Report (*.json)|*.json" wpflayout:FileDialogButton.InitialDirectory="A520A1A4-1780-4FF6-BD18-167343C5AF16/Elder Game/Project Gorgon/Reports" FontSize="16" Width="140" Height="26" IsEnabled="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource TrueFalse}}" VerticalAlignment="Center" Margin="10,0,10,0"/>
             <localctrl:BusyIndicator Visibility="{Binding IsAnalyzing, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource HiddenVisible}, FallbackValue=Collapsed}" VerticalAlignment="Center" Width="24" Height="24"/>
             <TextBlock FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0">(V.I.P reports can be found in AppData\LocalLow\Elder Game\Project Gorgon\Reports)</TextBlock>
         </StackPanel>
