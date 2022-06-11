@@ -281,6 +281,9 @@ public class Character
         if (skill is null)
             return true;
 
+        if (pgAbility.KeywordList.Contains(AbilityKeyword.Werewolf) && !IsLycanthrope)
+            return false;
+
         bool IsMissing = true;
 
         foreach (string AbilityKey in skill.Abilities)
