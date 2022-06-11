@@ -9,9 +9,9 @@ using System.Windows.Media;
 public static class DragDropTools
 {
     #region Events
-    public static void OnListBoxItemMouseMove(object sender, MouseEventArgs e)
+    public static void OnListBoxItemMouseMove(object sender, MouseEventArgs args)
     {
-        if (e.LeftButton == MouseButtonState.Pressed && sender is ListBoxItem)
+        if (args.LeftButton == MouseButtonState.Pressed && sender is ListBoxItem)
         {
             ListBoxItem DraggedItem = (ListBoxItem)sender;
             DragDrop.DoDragDrop(DraggedItem, DraggedItem.DataContext, DragDropEffects.Move);
@@ -19,10 +19,10 @@ public static class DragDropTools
         }
     }
 
-    public static void OnListBoxItemDrop(object sender, DragEventArgs e)
+    public static void OnListBoxItemDrop(object sender, DragEventArgs args)
     {
         object Target = ((ListBoxItem)sender).DataContext;
-        object Dropped = e.Data.GetData(Target.GetType());
+        object Dropped = args.Data.GetData(Target.GetType());
 
         DependencyObject Ancestor = (DependencyObject)sender;
         while (Ancestor != null && !(Ancestor is ListBox))
@@ -37,7 +37,11 @@ public static class DragDropTools
 
             IList ItemsSource = (IList)container.ItemsSource;
 
-            if (RemoveIndex < TargetIndex)
+            if (RemoveIndex < 0)
+            {
+                ItemsSource.Insert(TargetIndex, Dropped);
+            }
+            else if (RemoveIndex < TargetIndex)
             {
                 ItemsSource.Insert(TargetIndex + 1, Dropped);
                 ItemsSource.RemoveAt(RemoveIndex);

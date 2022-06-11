@@ -131,4 +131,89 @@ public static class SelectorTools
         ItemContainerGenerator ItemContainerGenerator = itemsControl.ItemContainerGenerator;
         return ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
     }
+
+    public static double GetGridsplitterPosition(Window root, string name)
+    {
+        double Value = double.NaN;
+
+        if (FindChildByName(root, name, out FrameworkElement Child) && Child is GridSplitter Control)
+        {
+            if (Control.Parent is Grid ParentGrid)
+            {
+                bool IsVertical = Control.VerticalAlignment == VerticalAlignment.Stretch;
+
+                if (IsVertical)
+                {
+                    int Column = Grid.GetColumn(Control);
+                    if (Column > 0 && Column < ParentGrid.ColumnDefinitions.Count)
+                    {
+                        ColumnDefinition Definition = ParentGrid.ColumnDefinitions[Column - 1];
+                        GridLength Length = Definition.Width;
+
+                        if (Length.IsAbsolute)
+                            Value = Length.Value;
+                    }
+                }
+                else
+                {
+                    int Row = Grid.GetRow(Control);
+                    if (Row > 0 && Row < ParentGrid.RowDefinitions.Count)
+                    {
+                        RowDefinition Definition = ParentGrid.RowDefinitions[Row - 1];
+                        GridLength Length = Definition.Height;
+
+                        if (Length.IsAbsolute)
+                            Value = Length.Value;
+                    }
+                }
+            }
+        }
+
+        return Value;
+    }
+
+    public static void SetGridsplitterPosition(Window root, string name, double position)
+    {
+        if (!FindChildByName(root, name, out FrameworkElement Child) || Child is not GridSplitter Control)
+            return;
+
+        if (Control.Parent is not Grid ParentGrid)
+            return;
+
+        bool IsVertical = Control.VerticalAlignment == VerticalAlignment.Stretch;
+
+        if (IsVertical)
+        {
+            int Column = Grid.GetColumn(Control);
+            if (Column > 0 && Column < ParentGrid.ColumnDefinitions.Count)
+            {
+                ColumnDefinition Definition = ParentGrid.ColumnDefinitions[Column - 1];
+                Definition.Width = new GridLength(position, GridUnitType.Pixel);
+            }
+        }
+        else
+        {
+            int Row = Grid.GetRow(Control);
+            if (Row > 0 && Row < ParentGrid.RowDefinitions.Count)
+            {
+                RowDefinition Definition = ParentGrid.RowDefinitions[Row - 1];
+                Definition.Height = new GridLength(position, GridUnitType.Pixel);
+            }
+        }
+    }
+
+    public static void GetWindowSize(Window root, out double width, out double height)
+    {
+        width = root.Width;
+        height = root.Height;
+    }
+
+    public static void SetWindowSize(Window root, double width, double height)
+    {
+        if (!double.IsNaN(width) && !double.IsNaN(height))
+        {
+            root.Width = width;
+            root.Height = height;
+        }
+    }
 }

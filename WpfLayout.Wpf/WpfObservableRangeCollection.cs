@@ -33,26 +33,26 @@ namespace System.Windows.Data
     /// When overriding this method, either call its base implementation
     /// or call <see cref="BlockReentrancy"/> to guard against reentrant collection changes.
     /// </remarks>
-    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
     {
       FieldInfo? Field = typeof(RangeObservableCollection<T>).GetField("_deferredEvents", BindingFlags.Instance | BindingFlags.NonPublic);
       var _deferredEvents = Field?.GetValue(this) as ICollection<NotifyCollectionChangedEventArgs>;
       if (_deferredEvents != null)
       {
-        _deferredEvents.Add(e);
+        _deferredEvents.Add(args);
         return;
       }
 
       foreach (var handler in GetHandlers())
-        if (IsRange(e) && handler.Target is CollectionView cv)
+        if (IsRange(args) && handler.Target is CollectionView cv)
           cv.Refresh();
         else
-          handler(this, e);
+          handler(this, args);
     }
 
     protected override IDisposable DeferEvents() => new DeferredEventsCollection(this);
 
-    bool IsRange(NotifyCollectionChangedEventArgs e) => e.NewItems?.Count > 1 || e.OldItems?.Count > 1;
+    bool IsRange(NotifyCollectionChangedEventArgs args) => args.NewItems?.Count > 1 || args.OldItems?.Count > 1;
     IEnumerable<NotifyCollectionChangedEventHandler> GetHandlers()
     {
       var info = typeof(ObservableCollection<T>).GetField(nameof(CollectionChanged), BindingFlags.Instance | BindingFlags.NonPublic);

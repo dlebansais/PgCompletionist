@@ -552,14 +552,14 @@ namespace System.Collections.ObjectModel
     /// When overriding this method, either call its base implementation
     /// or call <see cref="BlockReentrancy"/> to guard against reentrant collection changes.
     /// </remarks>
-    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
     {
       if (_deferredEvents != null)
       {
-        _deferredEvents.Add(e);
+        _deferredEvents.Add(args);
         return;
       }
-      base.OnCollectionChanged(e);
+      base.OnCollectionChanged(args);
     }
 
     protected virtual IDisposable DeferEvents() => new DeferredEventsCollection(this);

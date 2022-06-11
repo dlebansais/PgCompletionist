@@ -4,5 +4,6 @@ public enum FileDialogMode
 {
     None,
     Open,
+    OpenMultiple,
     Save,
 }

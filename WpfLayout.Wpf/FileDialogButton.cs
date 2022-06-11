@@ -2,6 +2,7 @@
 
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -75,6 +76,11 @@ public static class FileDialogButton
                     ShowDialogAndReportClick(new OpenFileDialog(), AsButton, Mode);
                     break;
 
+                case FileDialogMode.OpenMultiple:
+                    args.Handled = true;
+                    ShowDialogAndReportClick(new OpenFileDialog() { Multiselect = true }, AsButton, Mode);
+                    break;
+
                 case FileDialogMode.Save:
                     args.Handled = true;
                     ShowDialogAndReportClick(new SaveFileDialog(), AsButton, Mode);
@@ -120,46 +126,95 @@ public static class FileDialogButton
 
         bool? DialogResult = dlg.ShowDialog();
 
-        if (DialogResult.HasValue && DialogResult.Value && dlg.FileName is string FilePath)
+        if (DialogResult.HasValue && DialogResult.Value == true)
         {
-            if (mode == FileDialogMode.Open)
+            switch (mode)
             {
-                string Content = string.Empty;
-                bool IsFileCopied;
-
-                try
-                {
-                    using FileStream FileStream = new(FilePath, FileMode.Open, FileAccess.Read);
-                    using StreamReader Reader = new(FileStream);
-                    Content = Reader.ReadToEnd();
-                    IsFileCopied = true;
-                }
-                catch
-                {
-                    IsFileCopied = false;
-                }
-
-                if (IsFileCopied)
-                {
-                    FileDialogResult Result = new(mode, FilePath, Content);
-                    button.Command.Execute(Result);
-                }
+                case FileDialogMode.Open:
+                    ReportOpen(dlg.FileName, button.Command);
+                    break;
+                case FileDialogMode.OpenMultiple:
+                    ReportOpenMultiple(dlg.FileNames, button.Command);
+                    break;
+                case FileDialogMode.Save:
+                    ReportSave(dlg.FileName, button.Command);
+                    break;
             }
-            else if (mode == FileDialogMode.Save)
-            {
-                FileDialogResult Result = new(mode, FilePath);
-                button.Command.Execute(Result);
+        }
+    }
 
-                try
-                {
-                    using FileStream FileStream = new(FilePath, FileMode.Create, FileAccess.Write);
-                    using StreamWriter Writer = new(FileStream);
-                    Writer.Write(Result.Content);
-                    Writer.Flush();
-                }
-                catch
-                {
-                }
+    private static void ReportOpen(string? fileName, ICommand command)
+    {
+        if (fileName is not null)
+        {
+            string Content = string.Empty;
+            bool IsFileCopied;
+
+            try
+            {
+                using FileStream FileStream = new(fileName, FileMode.Open, FileAccess.Read);
+                using StreamReader Reader = new(FileStream);
+                Content = Reader.ReadToEnd();
+                IsFileCopied = true;
+            }
+            catch
+            {
+                IsFileCopied = false;
+            }
+
+            if (IsFileCopied)
+            {
+                FileDialogResult Result = new(FileDialogMode.Open, fileName, Content);
+                command.Execute(Result);
+            }
+        }
+    }
+
+    private static void ReportOpenMultiple(string[] fileNames, ICommand command)
+    {
+        Dictionary<string, string?> FileContentTable = new();
+
+        foreach (string FileName in fileNames)
+        {
+            string? Content;
+
+            try
+            {
+                using FileStream FileStream = new(FileName, FileMode.Open, FileAccess.Read);
+                using StreamReader Reader = new(FileStream);
+                Content = Reader.ReadToEnd();
+            }
+            catch
+            {
+                Content = null;
+            }
+
+            FileContentTable.Add(FileName, Content);
+        }
+
+        if (FileContentTable.Count > 0)
+        {
+            FileDialogResult Result = new(FileDialogMode.Open, FileContentTable);
+            command.Execute(Result);
+        }
+    }
+
+    private static void ReportSave(string? fileName, ICommand command)
+    {
+        if (fileName is not null)
+        {
+            FileDialogResult Result = new(FileDialogMode.Save, fileName);
+            command.Execute(Result);
+
+            try
+            {
+                using FileStream FileStream = new(fileName, FileMode.Create, FileAccess.Write);
+                using StreamWriter Writer = new(FileStream);
+                Writer.Write(Result.Content);
+                Writer.Flush();
+            }
+            catch
+            {
             }
         }
     }

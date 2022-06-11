@@ -14,7 +14,7 @@ public partial class App : Application
     }
     #endregion
 
-    #region Events
+    #region Drag & Drop
     private void OnListBoxItemMouseMove(object sender, MouseEventArgs args)
     {
         DragDropTools.OnListBoxItemMouseMove(sender, args);
