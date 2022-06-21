@@ -28,13 +28,13 @@
             Unloaded += OnUnloaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
             ControlList.Add(Control);
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
             ControlList.Remove(Control);
@@ -58,10 +58,10 @@
         /// </summary>
         public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register("IsExpanded", typeof(bool), typeof(CustomPopupButton), new UIPropertyMetadata(false, OnIsExpandedChanged));
 
-        private static void OnIsExpandedChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnIsExpandedChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is bool NewIsExpanded)
+            if (args.NewValue is bool NewIsExpanded)
                 Control.OnIsExpandedChanged(NewIsExpanded);
         }
 
@@ -93,10 +93,10 @@
         /// </summary>
         public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register("Header", typeof(string), typeof(CustomPopupButton), new UIPropertyMetadata(string.Empty, OnHeaderChanged));
 
-        private static void OnHeaderChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHeaderChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is string NewHeader)
+            if (args.NewValue is string NewHeader)
                 Control.OnHeaderChanged(NewHeader);
         }
 
@@ -123,10 +123,10 @@
         /// </summary>
         public static readonly new DependencyProperty ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(CustomPopupButton), new UIPropertyMetadata(null, OnContentChanged));
 
-        private static void OnContentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnContentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            Control.OnContentChanged(e.NewValue);
+            Control.OnContentChanged(args.NewValue);
         }
 
         /// <summary>
@@ -151,10 +151,10 @@
         /// </summary>
         public static readonly new DependencyProperty ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(CustomPopupButton), new UIPropertyMetadata(new DataTemplate(), OnContentTemplateChanged));
 
-        private static void OnContentTemplateChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnContentTemplateChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is DataTemplate NewContentTemplate)
+            if (args.NewValue is DataTemplate NewContentTemplate)
                 Control.OnContentTemplateChanged(NewContentTemplate);
         }
 
@@ -180,10 +180,10 @@
         /// </summary>
         public static readonly DependencyProperty PopupWidthProperty = DependencyProperty.Register("PopupWidth", typeof(double), typeof(CustomPopupButton), new UIPropertyMetadata(double.NaN, OnPopupWidthChanged));
 
-        private static void OnPopupWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnPopupWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is double NewPopupWidth)
+            if (args.NewValue is double NewPopupWidth)
                 Control.OnPopupWidthChanged(NewPopupWidth);
         }
 
@@ -209,10 +209,10 @@
         /// </summary>
         public static readonly DependencyProperty PopupHeightProperty = DependencyProperty.Register("PopupHeight", typeof(double), typeof(CustomPopupButton), new UIPropertyMetadata(double.NaN, OnPopupHeightChanged));
 
-        private static void OnPopupHeightChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnPopupHeightChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is double NewPopupHeight)
+            if (args.NewValue is double NewPopupHeight)
                 Control.OnPopupHeightChanged(NewPopupHeight);
         }
 
@@ -238,10 +238,10 @@
         /// </summary>
         public static readonly DependencyProperty HorizontalOffsetProperty = DependencyProperty.Register("HorizontalOffset", typeof(double), typeof(CustomPopupButton), new UIPropertyMetadata(0.0, OnHorizontalOffsetChanged));
 
-        private static void OnHorizontalOffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHorizontalOffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is double NewHorizontalOffset)
+            if (args.NewValue is double NewHorizontalOffset)
                 Control.OnHorizontalOffsetChanged(NewHorizontalOffset);
         }
 
@@ -267,10 +267,10 @@
         /// </summary>
         public static readonly DependencyProperty VerticalOffsetProperty = DependencyProperty.Register("VerticalOffset", typeof(double), typeof(CustomPopupButton), new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
 
-        private static void OnVerticalOffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnVerticalOffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is double NewVerticalOffset)
+            if (args.NewValue is double NewVerticalOffset)
                 Control.OnVerticalOffsetChanged(NewVerticalOffset);
         }
 
@@ -296,10 +296,10 @@
         /// </summary>
         public static readonly DependencyProperty ButtonAlignmentProperty = DependencyProperty.Register("ButtonAlignment", typeof(HorizontalAlignment), typeof(CustomPopupButton), new UIPropertyMetadata(HorizontalAlignment.Left, OnButtonAlignmentChanged));
 
-        private static void OnButtonAlignmentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnButtonAlignmentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             CustomPopupButton Control = (CustomPopupButton)sender;
-            if (e.NewValue is HorizontalAlignment NewButtonAlignment)
+            if (args.NewValue is HorizontalAlignment NewButtonAlignment)
                 Control.OnButtonAlignmentChanged(NewButtonAlignment);
         }
 
@@ -349,7 +349,7 @@
 
         #region Events
 #nullable disable annotations
-        private void OnDeactivated(object sender, EventArgs e)
+        private void OnDeactivated(object sender, EventArgs args)
 #nullable restore annotations
         {
             if (IsExpanded)

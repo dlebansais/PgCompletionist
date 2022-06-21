@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
 
 public static class SystemTools
 {
@@ -35,6 +36,11 @@ public static class SystemTools
 #pragma warning restore IL3000 // Avoid using accessing Assembly file path when publishing as a single-file
 
         return VersionInfo.FileVersion;
+    }
+
+    public static async Task OpenLink(FrameworkElement parent, string url)
+    {
+        await Task.CompletedTask;
     }
 
     public static async Task<byte[]> GetResourceFile(string name)

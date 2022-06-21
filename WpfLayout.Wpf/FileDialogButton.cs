@@ -147,14 +147,14 @@ public static class FileDialogButton
     {
         if (fileName is not null)
         {
-            string Content = string.Empty;
+            byte[] ContentBytes = Array.Empty<byte>();
             bool IsFileCopied;
 
             try
             {
                 using FileStream FileStream = new(fileName, FileMode.Open, FileAccess.Read);
-                using StreamReader Reader = new(FileStream);
-                Content = Reader.ReadToEnd();
+                using BinaryReader Reader = new(FileStream);
+                ContentBytes = Reader.ReadBytes((int)FileStream.Length);
                 IsFileCopied = true;
             }
             catch
@@ -164,7 +164,7 @@ public static class FileDialogButton
 
             if (IsFileCopied)
             {
-                FileDialogResult Result = new(FileDialogMode.Open, fileName, Content);
+                FileDialogResult Result = new(FileDialogMode.Open, fileName, ContentBytes);
                 command.Execute(Result);
             }
         }
@@ -172,29 +172,29 @@ public static class FileDialogButton
 
     private static void ReportOpenMultiple(string[] fileNames, ICommand command)
     {
-        Dictionary<string, string?> FileContentTable = new();
+        Dictionary<string, byte[]?> FileContentBytesTable = new();
 
         foreach (string FileName in fileNames)
         {
-            string? Content;
+            byte[]? ContentBytes;
 
             try
             {
                 using FileStream FileStream = new(FileName, FileMode.Open, FileAccess.Read);
-                using StreamReader Reader = new(FileStream);
-                Content = Reader.ReadToEnd();
+                using BinaryReader Reader = new(FileStream);
+                ContentBytes = Reader.ReadBytes((int)FileStream.Length);
             }
             catch
             {
-                Content = null;
+                ContentBytes = null;
             }
 
-            FileContentTable.Add(FileName, Content);
+            FileContentBytesTable.Add(FileName, ContentBytes);
         }
 
-        if (FileContentTable.Count > 0)
+        if (FileContentBytesTable.Count > 0)
         {
-            FileDialogResult Result = new(FileDialogMode.Open, FileContentTable);
+            FileDialogResult Result = new(FileDialogMode.Open, FileContentBytesTable);
             command.Execute(Result);
         }
     }
@@ -209,8 +209,8 @@ public static class FileDialogButton
             try
             {
                 using FileStream FileStream = new(fileName, FileMode.Create, FileAccess.Write);
-                using StreamWriter Writer = new(FileStream);
-                Writer.Write(Result.Content);
+                using BinaryWriter Writer = new(FileStream);
+                Writer.Write(Result.ContentBytes);
                 Writer.Flush();
             }
             catch

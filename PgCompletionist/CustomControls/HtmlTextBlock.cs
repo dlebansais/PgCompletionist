@@ -39,10 +39,10 @@
 
         public static readonly DependencyProperty HtmlFormattedTextProperty = DependencyProperty.Register("HtmlFormattedText", typeof(string), typeof(HtmlTextBlock), new UIPropertyMetadata(null, OnHtmlFormattedTextChanged));
 
-        private static void OnHtmlFormattedTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHtmlFormattedTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             HtmlTextBlock Ctrl = (HtmlTextBlock)sender;
-            Ctrl.OnHtmlFormattedTextChanged(e.NewValue as string);
+            Ctrl.OnHtmlFormattedTextChanged(args.NewValue as string);
         }
 
         private void OnHtmlFormattedTextChanged(string? newValue)
@@ -107,6 +107,7 @@
                         AddRun(Result.Inlines, text, startIndex, Index, format, ref hasNewLine);
 
                     Run Nested = ParseSpan(text, ref Index);
+                    Nested.FontSize = format.Title.FontSize;
                     Result.Inlines.Add(Nested);
 
                     startIndex = Index;

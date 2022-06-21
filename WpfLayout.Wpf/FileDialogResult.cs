@@ -1,32 +1,33 @@
 ﻿namespace WpfLayout;
 
+using System;
 using System.Collections.Generic;
 
 public record FileDialogResult
 {
     public FileDialogResult(FileDialogMode mode, string filePath)
-        : this(mode, filePath, string.Empty)
+        : this(mode, filePath, Array.Empty<byte>())
     {
     }
 
-    public FileDialogResult(FileDialogMode mode, string filePath, string content)
+    public FileDialogResult(FileDialogMode mode, string filePath, byte[] contentBytes)
     {
         Mode = mode;
         FilePath = filePath;
-        Content = content;
-        FileContentTable = new();
+        ContentBytes = contentBytes;
+        FileContentBytesTable = new Dictionary<string, byte[]?>();
     }
 
-    public FileDialogResult(FileDialogMode mode, Dictionary<string, string?> fileContentTable)
+    public FileDialogResult(FileDialogMode mode, Dictionary<string, byte[]?> fileContentBytesTable)
     {
         Mode = mode;
         FilePath = string.Empty;
-        Content = string.Empty;
-        FileContentTable = fileContentTable;
+        ContentBytes = Array.Empty<byte>();
+        FileContentBytesTable = fileContentBytesTable;
     }
 
     public FileDialogMode Mode { get; }
     public string FilePath { get; set; }
-    public string Content { get; set; }
-    public Dictionary<string, string?> FileContentTable { get; set; }
+    public byte[] ContentBytes { get; set; }
+    public Dictionary<string, byte[]?> FileContentBytesTable { get; set; }
 }

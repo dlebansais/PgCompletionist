@@ -3,6 +3,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -132,9 +133,50 @@ public static class SelectorTools
         return ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
     }
 
-    public static double GetGridsplitterPosition(Window root, string name)
+    public static bool ParseEventArguments<TDataContext>(RoutedEventArgs args, out TDataContext dataContext)
     {
-        double Value = double.NaN;
+        if (args.OriginalSource is Hyperlink HyperlinkSource)
+        {
+            if (HyperlinkSource.DataContext is TDataContext AsDataContext)
+            {
+                dataContext = AsDataContext;
+                return true;
+            }
+        }
+
+        if (args.OriginalSource is FrameworkElement ElementSource)
+        {
+            if (ElementSource.DataContext is TDataContext AsDataContext)
+            {
+                dataContext = AsDataContext;
+                return true;
+            }
+        }
+
+        dataContext = default!;
+        return false;
+    }
+
+    public static bool ParseEventArguments<TControl, TDataContext>(RoutedEventArgs args, out TControl control, out TDataContext dataContext)
+    {
+        if (args.OriginalSource is FrameworkElement Source && Source is TControl AsControl)
+        {
+            if (Source.DataContext is TDataContext AsDataContext)
+            {
+                control = AsControl;
+                dataContext = AsDataContext;
+                return true;
+            }
+        }
+
+        control = default!;
+        dataContext = default!;
+        return false;
+    }
+
+    public static GridsplitterPosition GetGridsplitterPosition(Window root, string name)
+    {
+        GridsplitterPosition Value = new();
 
         if (FindChildByName(root, name, out FrameworkElement Child) && Child is GridSplitter Control)
         {
@@ -145,25 +187,27 @@ public static class SelectorTools
                 if (IsVertical)
                 {
                     int Column = Grid.GetColumn(Control);
-                    if (Column > 0 && Column < ParentGrid.ColumnDefinitions.Count)
+                    if (Column > 0 && Column + 1 < ParentGrid.ColumnDefinitions.Count)
                     {
-                        ColumnDefinition Definition = ParentGrid.ColumnDefinitions[Column - 1];
-                        GridLength Length = Definition.Width;
+                        ColumnDefinition DefinitionBefore = ParentGrid.ColumnDefinitions[Column - 1];
+                        GridLength LengthBefore = DefinitionBefore.Width;
+                        ColumnDefinition DefinitionAfter = ParentGrid.ColumnDefinitions[Column + 1];
+                        GridLength LengthAfter = DefinitionAfter.Width;
 
-                        if (Length.IsAbsolute)
-                            Value = Length.Value;
+                        Value = new() { Before = LengthBefore.Value, After = LengthAfter.Value };
                     }
                 }
                 else
                 {
                     int Row = Grid.GetRow(Control);
-                    if (Row > 0 && Row < ParentGrid.RowDefinitions.Count)
+                    if (Row > 0 && Row + 1 < ParentGrid.RowDefinitions.Count)
                     {
-                        RowDefinition Definition = ParentGrid.RowDefinitions[Row - 1];
-                        GridLength Length = Definition.Height;
+                        RowDefinition DefinitionBefore = ParentGrid.RowDefinitions[Row - 1];
+                        GridLength LengthBefore = DefinitionBefore.Height;
+                        RowDefinition DefinitionAfter = ParentGrid.RowDefinitions[Row + 1];
+                        GridLength LengthAfter = DefinitionAfter.Height;
 
-                        if (Length.IsAbsolute)
-                            Value = Length.Value;
+                        Value = new() { Before = LengthBefore.Value, After = LengthAfter.Value };
                     }
                 }
             }
@@ -172,9 +216,9 @@ public static class SelectorTools
         return Value;
     }
 
-    public static void SetGridsplitterPosition(Window root, string name, double position)
+    public static void SetGridsplitterPosition(Window root, string name, GridsplitterPosition position)
     {
-        if (!FindChildByName(root, name, out FrameworkElement Child) || Child is not GridSplitter Control)
+        if (!FindChildByName(root, name, out FrameworkElement Child) || Child is not GridSplitter Control || double.IsNaN(position.Before) || double.IsNaN(position.After))
             return;
 
         if (Control.Parent is not Grid ParentGrid)
@@ -185,19 +229,29 @@ public static class SelectorTools
         if (IsVertical)
         {
             int Column = Grid.GetColumn(Control);
-            if (Column > 0 && Column < ParentGrid.ColumnDefinitions.Count)
+            if (Column > 0 && Column + 1 < ParentGrid.ColumnDefinitions.Count)
             {
-                ColumnDefinition Definition = ParentGrid.ColumnDefinitions[Column - 1];
-                Definition.Width = new GridLength(position, GridUnitType.Pixel);
+                ColumnDefinition DefinitionBefore = ParentGrid.ColumnDefinitions[Column - 1];
+                GridLength LengthBefore = DefinitionBefore.Width;
+                ColumnDefinition DefinitionAfter = ParentGrid.ColumnDefinitions[Column + 1];
+                GridLength LengthAfter = DefinitionAfter.Width;
+
+                DefinitionBefore.Width = new GridLength(position.Before, LengthBefore.GridUnitType);
+                DefinitionAfter.Width = new GridLength(position.After, LengthAfter.GridUnitType);
             }
         }
         else
         {
             int Row = Grid.GetRow(Control);
-            if (Row > 0 && Row < ParentGrid.RowDefinitions.Count)
+            if (Row > 0 && Row + 1 < ParentGrid.RowDefinitions.Count)
             {
-                RowDefinition Definition = ParentGrid.RowDefinitions[Row - 1];
-                Definition.Height = new GridLength(position, GridUnitType.Pixel);
+                RowDefinition DefinitionBefore = ParentGrid.RowDefinitions[Row - 1];
+                GridLength LengthBefore = DefinitionBefore.Height;
+                RowDefinition DefinitionAfter = ParentGrid.RowDefinitions[Row + 1];
+                GridLength LengthAfter = DefinitionAfter.Height;
+
+                DefinitionBefore.Height = new GridLength(position.Before, LengthBefore.GridUnitType);
+                DefinitionAfter.Height = new GridLength(position.After, LengthAfter.GridUnitType);
             }
         }
     }

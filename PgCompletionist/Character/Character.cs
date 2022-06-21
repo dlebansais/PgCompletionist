@@ -4,6 +4,7 @@ using PgObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -450,9 +451,10 @@ public class Character
             return "unknown NPC";
     }
 
-    public void UpdateGourmand(DateTime reportTime, string content)
+    public void UpdateGourmand(DateTime reportTime, byte[] contentBytes)
     {
-        string CleanContent = content;
+        string CleanContent = Encoding.UTF8.GetString(contentBytes);
+
         CleanContent = CleanContent.Replace("\r", string.Empty);
         CleanContent = CleanContent.Replace(" (HAS DAIRY)", string.Empty);
         CleanContent = CleanContent.Replace(" (HAS MEAT)", string.Empty);

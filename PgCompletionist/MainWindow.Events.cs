@@ -25,13 +25,13 @@ public partial class MainWindow
         if (Result.FilePath.Length > 0)
         {
             SetIsAnalyzing(true);
-            TaskDispatcher.Dispatch(() => ExecuteAddReport(Result.FilePath, Result.Content));
+            TaskDispatcher.Dispatch(() => ExecuteAddReport(Result.FilePath, Result.ContentBytes));
         }
     }
 
-    private async Task ExecuteAddReport(string fileName, string content)
+    private async Task ExecuteAddReport(string fileName, byte[] contentBytes)
     {
-        await Task.Run(() => ParseReportFile(fileName, content));
+        await Task.Run(() => ParseReportFile(fileName, contentBytes));
         SetIsAnalyzing(false);
     }
 
@@ -94,13 +94,13 @@ public partial class MainWindow
         if (Result.FilePath.Length > 0)
         {
             SetIsAnalyzing(true);
-            TaskDispatcher.Dispatch(() => ExecuteAddGourmand(Result.FilePath, Result.Content));
+            TaskDispatcher.Dispatch(() => ExecuteAddGourmand(Result.FilePath, Result.ContentBytes));
         }
     }
 
-    private async Task ExecuteAddGourmand(string fileName, string content)
+    private async Task ExecuteAddGourmand(string fileName, byte[] contentBytes)
     {
-        await Task.Run(() => ParseGourmandFile(fileName, content));
+        await Task.Run(() => ParseGourmandFile(fileName, contentBytes));
         SetIsAnalyzing(false);
     }
 }

@@ -11,7 +11,6 @@ public partial class MainWindow : MainWindowUI
         StatusText = $"Downloaded content {Groups.Version} copyright © 2022, Elder Game, LLC";
 
         TaskDispatcher = TaskDispatcher.Create(this);
-        IconTools.Initialize(this, Groups.Version, 3467, "PgCompletionist");
     }
 
     private TaskDispatcher TaskDispatcher;

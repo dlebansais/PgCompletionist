@@ -41,7 +41,7 @@ public partial class MainWindow
                     }
             }
 
-            TaskDispatcher.Dispatch(() => SelectedCharacterIndex = Index);
+            TaskDispatcher.Dispatch(() => { SelectedCharacterIndex = Index; });
         }
     }
 

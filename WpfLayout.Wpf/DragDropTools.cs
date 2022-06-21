@@ -8,14 +8,33 @@ using System.Windows.Media;
 
 public static class DragDropTools
 {
-    #region Events
+    public static void Enable(bool isEnabled)
+    {
+        if (!isEnabled)
+            DisableCount++;
+        else if (DisableCount > 0)
+            DisableCount--;
+    }
+
+    private static int DisableCount { get; set; }
+    public static bool IsEnabled { get { return DisableCount == 0; } }
+
     public static void OnListBoxItemMouseMove(object sender, MouseEventArgs args)
     {
-        if (args.LeftButton == MouseButtonState.Pressed && sender is ListBoxItem)
+        if (!IsEnabled)
+            return;
+
+        try
         {
-            ListBoxItem DraggedItem = (ListBoxItem)sender;
-            DragDrop.DoDragDrop(DraggedItem, DraggedItem.DataContext, DragDropEffects.Move);
-            DraggedItem.IsSelected = true;
+            if (args.LeftButton == MouseButtonState.Pressed && sender is ListBoxItem)
+            {
+                ListBoxItem DraggedItem = (ListBoxItem)sender;
+                DragDrop.DoDragDrop(DraggedItem, DraggedItem.DataContext, DragDropEffects.Move);
+                DraggedItem.IsSelected = true;
+            }
+        }
+        catch
+        {
         }
     }
 
@@ -53,5 +72,4 @@ public static class DragDropTools
             }
         }
     }
-    #endregion
 }

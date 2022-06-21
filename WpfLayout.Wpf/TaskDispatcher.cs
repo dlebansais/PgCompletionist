@@ -30,17 +30,12 @@ public class TaskDispatcher
 
     public void Dispatch(Delegate @delegate)
     {
+        Dispatch(@delegate, TimeSpan.Zero);
+    }
+
+    public void Dispatch(Delegate @delegate, TimeSpan delay)
+    {
         Dispatcher?.BeginInvoke(DispatcherPriority.ContextIdle, @delegate);
-    }
-
-    public void Dispatch(Delegate @delegate, object? arg)
-    {
-        Dispatcher?.BeginInvoke(DispatcherPriority.ContextIdle, @delegate, arg);
-    }
-
-    public void Dispatch(Delegate @delegate, object? arg, params object?[] args)
-    {
-        Dispatcher?.BeginInvoke(DispatcherPriority.ContextIdle, @delegate, arg, args);
     }
 
     public void DispatchIgnoreRetry(Delegate @delegate)

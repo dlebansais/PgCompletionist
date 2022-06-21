@@ -8,18 +8,17 @@ using System.Text.Json.Serialization;
 
 public partial class MainWindow
 {
-    private void ParseReportFile(string fileName, string content)
+    private void ParseReportFile(string fileName, byte[] contentBytes)
     {
         string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
         if (FileNameWithoutExtension.StartsWith("Character_"))
-            ParseCharacterReport(FileNameWithoutExtension.Substring(10), content);
+            ParseCharacterReport(FileNameWithoutExtension.Substring(10), contentBytes);
     }
 
-    private void ParseCharacterReport(string characterName, string content)
+    private void ParseCharacterReport(string characterName, byte[] contentBytes)
     {
-        byte[] ContentBytes = Encoding.UTF8.GetBytes(content);
-        using MemoryStream Stream = new(ContentBytes);
+        using MemoryStream Stream = new(contentBytes);
 
         JsonSerializerOptions Options = new()
         {
@@ -72,7 +71,7 @@ public partial class MainWindow
         SelectedCharacterIndex = CharacterList.Count - 1;
     }
 
-    private void ParseGourmandFile(string fileName, string content)
+    private void ParseGourmandFile(string fileName, byte[] contentBytes)
     {
         string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
         string[] FileNameParts = FileNameWithoutExtension.Split('_');
@@ -92,7 +91,7 @@ public partial class MainWindow
                     if (CurrentCharacter is ObservableCharacter AsCharacter)
                     {
                         bool IsExpanded = AsCharacter.NeverEatenFoods.Count > 0 && AsCharacter.NeverEatenFoods.Count == AsCharacter.Item.NeverEatenFoods.Count;
-                        AsCharacter.Item.UpdateGourmand(ReportTime, content);
+                        AsCharacter.Item.UpdateGourmand(ReportTime, contentBytes);
                         TaskDispatcher.Dispatch(() => AsCharacter.UpdateGourmand(IsExpanded));
                     }
                 }

@@ -13,7 +13,7 @@
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs args)
         {
             if (Parent is Panel AsPanel)
             {
@@ -55,12 +55,12 @@
             }
         }
 
-        private void OnUserInitialized(object sender, SelectionChangedEventArgs e)
+        private void OnUserInitialized(object sender, SelectionChangedEventArgs args)
         {
             OnUserInitialized();
         }
 
-        private void OnUserInitialized(object sender, RoutedEventArgs e)
+        private void OnUserInitialized(object sender, RoutedEventArgs args)
         {
             if (sender is ToggleButton AsToggleButton)
                 AsToggleButton.IsThreeState = false;
@@ -68,7 +68,7 @@
             OnUserInitialized();
         }
 
-        private void TextChangedEventHandler(object sender, TextChangedEventArgs e)
+        private void TextChangedEventHandler(object sender, TextChangedEventArgs args)
         {
             OnUserInitialized();
         }
