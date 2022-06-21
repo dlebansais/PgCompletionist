@@ -36,12 +36,12 @@ public abstract partial class MainWindowUI : Window, INotifyPropertyChanged
     #endregion
 
     #region Events
-    public abstract void OnMainWindowLoaded(object sender, RoutedEventArgs e);
-    public abstract void OnMainWindowClosing(object sender, CancelEventArgs e);
-    public abstract void OnAddReport(object sender, ExecutedRoutedEventArgs e);
-    public abstract void OnDelete(object sender, ExecutedRoutedEventArgs e);
-    public abstract void OnExpand(object sender, ExecutedRoutedEventArgs e);
-    public abstract void OnAddGourmand(object sender, ExecutedRoutedEventArgs e);
+    public abstract void OnMainWindowLoaded(object sender, RoutedEventArgs args);
+    public abstract void OnMainWindowClosing(object sender, CancelEventArgs args);
+    public abstract void OnAddReport(object sender, ExecutedRoutedEventArgs args);
+    public abstract void OnDelete(object sender, ExecutedRoutedEventArgs args);
+    public abstract void OnExpand(object sender, ExecutedRoutedEventArgs args);
+    public abstract void OnAddGourmand(object sender, ExecutedRoutedEventArgs args);
     #endregion
 
     #region Storage

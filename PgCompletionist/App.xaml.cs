@@ -7,7 +7,7 @@ using WpfLayout;
 public partial class App : Application
 {
     #region Init
-    private void OnStartup(object sender, StartupEventArgs e)
+    private void OnStartup(object sender, StartupEventArgs args)
     {
         MainWindow MainWindow = new MainWindow();
         MainWindow.Show();

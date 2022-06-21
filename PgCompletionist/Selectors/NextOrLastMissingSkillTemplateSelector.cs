@@ -1,8 +1,7 @@
-﻿namespace Selectors
+﻿namespace Selectors;
+
+public class NextOrLastMissingSkillTemplateSelector : NextOrLastTemplateSelector
 {
-    public class NextOrLastMissingSkillTemplateSelector : NextOrLastTemplateSelector
-    {
-        protected override string NextTemplateName { get { return "NextMissingSkillTemplate"; } }
-        protected override string LastTemplateName { get { return "LastMissingSkillTemplate"; } }
-    }
+    protected override string NextTemplateName { get { return "NextMissingSkillTemplate"; } }
+    protected override string LastTemplateName { get { return "LastMissingSkillTemplate"; } }
 }
