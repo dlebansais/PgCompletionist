@@ -29,9 +29,13 @@ public class ObservableCharacter : INotifyPropertyChanged
     public bool IsLycanthrope { get { return Item.IsLycanthrope; } }
     public bool IsDruid { get { return Item.IsDruid; } }
     public WpfObservableRangeCollection<MissingSkill> MissingSkills { get; } = new();
+    public bool HasMissingSkills { get { return MissingSkills.Count > 0; } }
     public WpfObservableRangeCollection<NonMaxedSkill> NonMaxedSkills { get; } = new();
+    public bool HasNonMaxedSkills { get { return NonMaxedSkills.Count > 0; } }
     public WpfObservableRangeCollection<ObservableMissingAbilitesBySkill> MissingAbilitiesList { get; } = new();
+    public bool HasMissingAbilities { get { return MissingAbilitiesList.Count > 0; } }
     public WpfObservableRangeCollection<MissingRecipe> MissingRecipes { get; } = new();
+    public bool HasMissingRecipes { get { return MissingRecipes.Count > 0; } }
     public bool IsNeverEatenFoodKnown { get { return Item.LastGourmandReportTime != DateTime.MinValue; } }
     public DateTime LastGourmandReportTime { get { return Item.LastGourmandReportTime; } }
     public WpfObservableRangeCollection<NeverEatenFood> NeverEatenFoods { get; } = new();
