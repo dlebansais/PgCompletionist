@@ -29,6 +29,11 @@
             <EventSetter Event="MouseMove" Handler="OnListBoxItemMouseMove"/>
             <EventSetter Event="Drop" Handler="OnListBoxItemDrop" />
         </Style>
+        <Style x:Key="ListBoxItemStretchDragDropTarget" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="AllowDrop" Value="True" />
+            <EventSetter Event="Drop" Handler="OnListBoxItemDrop" />
+        </Style>
         <Style x:Key="ListBoxItemStretchSelectable" TargetType="{x:Type ListBoxItem}">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
