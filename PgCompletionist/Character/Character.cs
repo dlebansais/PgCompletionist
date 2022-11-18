@@ -130,10 +130,12 @@ public class Character
         foreach (string Key in AbilityObjects.Keys)
         {
             PgAbility PgAbility = AbilityObjects.Get(Key);
-            if (PgAbility.Skill_Key is not string SkillKey)
-                continue;
+            PgSkill PgSkill;
 
-            PgSkill PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : SkillObjects.Get(SkillKey));
+            if (PgAbility.Skill_Key is string SkillKey)
+                PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : SkillObjects.Get(SkillKey));
+            else
+                PgSkill = PgSkill.Unknown;
 
             if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || UnobtainableAbilityList.Contains(PgAbility))
                 continue;
