@@ -15,9 +15,10 @@ public static class LocalStorage
 
         try
         {
+            string KeyName = TypeSettingToName<T>(name);
             RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
             Key = Key?.CreateSubKey("Project Gorgon Tools");
-            RegistryKey? SettingKey = Key?.CreateSubKey(name);
+            RegistryKey? SettingKey = Key?.CreateSubKey(KeyName);
 
             string? JsonString = SettingKey?.GetValue("Content") as string;
             Result = JsonString is not null ? JsonSerializer.Deserialize<T>(JsonString) : null;
@@ -46,9 +47,10 @@ public static class LocalStorage
 
         try
         {
+            string KeyName = TypeSettingToName<T>(name);
             RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
             Key = Key?.CreateSubKey("Project Gorgon Tools");
-            RegistryKey? SettingKey = Key?.CreateSubKey(name);
+            RegistryKey? SettingKey = Key?.CreateSubKey(KeyName);
 
             SettingKey?.SetValue("Content", JsonString, RegistryValueKind.String);
 
@@ -66,5 +68,15 @@ public static class LocalStorage
         catch (IOException)
         {
         }
+    }
+
+    private static string TypeSettingToName<T>(string name)
+    {
+        string KeyName = typeof(T).FullName;
+        KeyName = KeyName.Replace(".", "\\");
+        if (name != string.Empty)
+            KeyName += $"\\{name}";
+
+        return KeyName;
     }
 }

@@ -9,14 +9,14 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.0.375</Version>
+    <Version>1.0.378</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Project: Gorgon Completionist</Description>
     <Copyright>Copyright © 2022 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.375.42</AssemblyVersion>
-    <FileVersion>1.0.375.14</FileVersion>
+    <AssemblyVersion>1.0.378.48</AssemblyVersion>
+    <FileVersion>1.0.378.15</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>PgCompletionist</RootNamespace>
@@ -52,7 +52,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

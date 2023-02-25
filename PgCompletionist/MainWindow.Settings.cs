@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 public partial class MainWindow
 {
-    private const string SettingsName = "Completionist";
-
     private async Task LoadSettings()
     {
         Settings? Settings = null;
 
         try
         {
-            Settings = await LocalStorage.GetItemAsync<Settings>(SettingsName);
+            Settings = await LocalStorage.GetItemAsync<Settings>(string.Empty);
         }
         catch
         {
@@ -58,6 +56,6 @@ public partial class MainWindow
 
         Settings.SelectedCharacter = (CurrentCharacter as ObservableCharacter)?.Name;
 
-        await LocalStorage.SetItemAsync<Settings>(SettingsName, Settings);
+        await LocalStorage.SetItemAsync(string.Empty, Settings);
     }
 }
