@@ -8,22 +8,19 @@ using Microsoft.Win32;
 
 public static class LocalStorage
 {
-    public static async Task<T?> GetItemAsync<T>(string name)
+    public static async Task<T?> GetItemAsync<T>(string keyName)
         where T : class, new()
     {
         T? Result = null;
 
         try
         {
-            string KeyName = TypeSettingToName<T>(name);
-            RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
-            Key = Key?.CreateSubKey("Project Gorgon Tools");
-            RegistryKey? SettingKey = Key?.CreateSubKey(KeyName);
+            using RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
+            using RegistryKey? PgKey = Key?.CreateSubKey("Project Gorgon Tools");
+            using RegistryKey? SettingKey = PgKey?.CreateSubKey(keyName);
 
             string? JsonString = SettingKey?.GetValue("Content") as string;
             Result = JsonString is not null ? JsonSerializer.Deserialize<T>(JsonString) : null;
-
-            await Task.Run(() => { });
         }
         catch (ObjectDisposedException)
         {
@@ -38,23 +35,23 @@ public static class LocalStorage
         {
         }
 
+        await Task.Run(() => { });
+
         return Result;
     }
 
-    public static async Task SetItemAsync<T>(string name, T value)
+    public static async Task SetItemAsync<T>(string keyName, T value)
     {
         string JsonString = JsonSerializer.Serialize(value);
 
         try
         {
-            string KeyName = TypeSettingToName<T>(name);
-            RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
-            Key = Key?.CreateSubKey("Project Gorgon Tools");
-            RegistryKey? SettingKey = Key?.CreateSubKey(KeyName);
+            using RegistryKey? Key = Registry.CurrentUser.OpenSubKey(@"Software", true);
+            using RegistryKey? PgKey = Key?.CreateSubKey("Project Gorgon Tools");
+            using RegistryKey? SettingKey = PgKey?.CreateSubKey(keyName);
 
             SettingKey?.SetValue("Content", JsonString, RegistryValueKind.String);
-
-            await Task.Run(() => { });
+            SettingKey?.Flush();
         }
         catch (ObjectDisposedException)
         {
@@ -68,15 +65,7 @@ public static class LocalStorage
         catch (IOException)
         {
         }
-    }
 
-    private static string TypeSettingToName<T>(string name)
-    {
-        string KeyName = typeof(T).FullName;
-        KeyName = KeyName.Replace(".", "\\");
-        if (name != string.Empty)
-            KeyName += $"\\{name}";
-
-        return KeyName;
+        await Task.Run(() => { });
     }
 }
