@@ -49,7 +49,7 @@ public partial class MainWindow
             return;
 
         Type SettingsType = Settings.GetType();
-        SettingsPrefix = SettingsType.FullName.Replace(".", "\\").Split('\\')[0];
+        SettingsPrefix = SettingsType.FullName!.Replace(".", "\\").Split('\\')[0];
     }
 
     private string SettingsPrefix = string.Empty;
