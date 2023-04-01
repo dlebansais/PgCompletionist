@@ -212,6 +212,7 @@ public class Character
         {
             Skill Skill = knownSkillTable[skillKey];
             IsFound = true;
+            int MaxAbilityLevel = 0;
 
             if (Skill.XpTowardNextLevel > 0)
             {
@@ -222,11 +223,13 @@ public class Character
                     Level = (Skill.Level is int SkillLevel) ? SkillLevel : 0,
                     IconId = iconId
                 };
-                
+
                 NonMaxedSkills.Add(NewItem);
             }
+            else if (Skill.Level is int MaxedLevel)
+                MaxAbilityLevel = MaxedLevel;
 
-            if (abilityList is not null && HasMissingAbilities(skillKey, skillObjectName, iconId, Skill, abilityList, UnknownSkill, sidebarOnly, out MissingAbilitesBySkill MissingAbilities))
+            if (abilityList is not null && HasMissingAbilities(skillKey, skillObjectName, iconId, Skill, abilityList, UnknownSkill, sidebarOnly, MaxAbilityLevel, out MissingAbilitesBySkill MissingAbilities))
                 MissingAbilitiesList.Add(MissingAbilities);
         }
 
@@ -243,12 +246,12 @@ public class Character
         }
     }
 
-    private bool HasMissingAbilities(string skillKey, string skillObjectName, int skillIconId, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, out MissingAbilitesBySkill missingAbilities)
+    private bool HasMissingAbilities(string skillKey, string skillObjectName, int skillIconId, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, int maxAbilityLevel, out MissingAbilitesBySkill missingAbilities)
     {
         missingAbilities = new();
 
         foreach (PgAbility PgAbility in skillAbilityList)
-            if (IsAbilityMissing(PgAbility, skill) && IsAbilityMissing(PgAbility, unknownSkill) && (!sidebarOnly || PgAbility.CanBeOnSidebar))
+            if (IsAbilityMissing(PgAbility, skill, maxAbilityLevel) && IsAbilityMissing(PgAbility, unknownSkill, maxAbilityLevel) && (!sidebarOnly || PgAbility.CanBeOnSidebar))
             {
                 if (missingAbilities.SkillKey.Length == 0)
                 {
@@ -279,12 +282,15 @@ public class Character
         return missingAbilities.MissingAbilities.Count > 0;
     }
 
-    private bool IsAbilityMissing(PgAbility pgAbility, Skill? skill)
+    private bool IsAbilityMissing(PgAbility pgAbility, Skill? skill, int maxAbilityLevel)
     {
         if (skill is null)
             return true;
 
         if (pgAbility.KeywordList.Contains(AbilityKeyword.Werewolf) && !IsLycanthrope)
+            return false;
+
+        if (maxAbilityLevel > 0 && pgAbility.Level > maxAbilityLevel)
             return false;
 
         bool IsMissing = true;
