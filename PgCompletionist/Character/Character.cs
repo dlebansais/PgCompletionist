@@ -375,18 +375,32 @@ public class Character
 
     private bool IsRecipeMissing(PgRecipe pgRecipe, List<string> knownRecipeNameList)
     {
+        int SourceItemCount = 0;
+        int UnobtainableSourceItemCount = 0;
+
         foreach (PgSource Source in pgRecipe.SourceList)
             if (Source is PgSourceItem FromItem)
             {
+                SourceItemCount++;
+
                 PgItem Item = ItemObjects.Get(FromItem.Item_Key!);
+                bool IsItemObtainable = true;
 
                 if (Item.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
-                    return false;
+                    IsItemObtainable = false;
+                else
+                {
+                    foreach (KeyValuePair<string, int> Entry in Item.SkillRequirementTable)
+                        if (IsUnavailableSkill(Entry.Key))
+                            IsItemObtainable = false;
+                }
 
-                foreach (KeyValuePair<string, int> Entry in Item.SkillRequirementTable)
-                    if (IsUnavailableSkill(Entry.Key))
-                        return false;
+                if (!IsItemObtainable)
+                    UnobtainableSourceItemCount++;
             }
+
+        if (SourceItemCount > 0 && SourceItemCount == UnobtainableSourceItemCount)
+            return false;
 
         return !knownRecipeNameList.Contains(pgRecipe.InternalName);
     }
