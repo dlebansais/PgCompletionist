@@ -3,20 +3,20 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <PublishSingleFile>true</PublishSingleFile>
-    <TargetFramework>net48</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <TargetFramework>net481</TargetFramework>
+    <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
-    <Version>1.0.384</Version>
+    <Version>1.0.386</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Project: Gorgon Completionist</Description>
     <Copyright>Copyright © 2022 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.384.53</AssemblyVersion>
-    <FileVersion>1.0.384.16</FileVersion>
+    <AssemblyVersion>1.0.386.57</AssemblyVersion>
+    <FileVersion>1.0.386.16</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>PgCompletionist</RootNamespace>
@@ -61,7 +61,7 @@
     <PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net481'">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
