@@ -117,7 +117,7 @@ public class Character
         foreach (string Key in ItemObjects.Keys)
         {
             PgItem PgItem = ItemObjects.Get(Key);
-            if (PgItem.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
+            if (!PgItem.KeywordValuesList.TrueForAll((PgItemKeywordValues value) => value.Keyword != ItemKeyword.Lint_NotObtainable))
                 if (PgItem.BestowAbility_Key is string AbilityKey)
                     UnobtainableAbilityList.Add(AbilityObjects.Get(AbilityKey));
         }
@@ -133,7 +133,7 @@ public class Character
             PgSkill PgSkill;
 
             if (PgAbility.Skill_Key is string SkillKey)
-                PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : SkillObjects.Get(SkillKey));
+                PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : SkillObjects.Get(SkillKey.Substring(1)));
             else
                 PgSkill = PgSkill.Unknown;
 
@@ -176,7 +176,7 @@ public class Character
 
         if (pgAbility.AbilityGroup_Key is string AbilityGroupKey)
         {
-            PgAbility AbilityGroup = AbilityObjects.Get(AbilityGroupKey);
+            PgAbility AbilityGroup = AbilityObjects.Get(AbilityGroupKey.Substring(1));
             if (AbilityGroup.InternalName == "RangedSlice1" && !IsFae)
                 return true;
         }
@@ -383,10 +383,10 @@ public class Character
             {
                 SourceItemCount++;
 
-                PgItem Item = ItemObjects.Get(FromItem.Item_Key!);
+                PgItem Item = ItemObjects.Get(FromItem.Item_Key?.Substring(1)!);
                 bool IsItemObtainable = true;
 
-                if (Item.KeywordTable.ContainsKey(ItemKeyword.Lint_NotObtainable))
+                if (!Item.KeywordValuesList.TrueForAll((PgItemKeywordValues value) => value.Keyword != ItemKeyword.Lint_NotObtainable))
                     IsItemObtainable = false;
                 else
                 {
@@ -428,7 +428,7 @@ public class Character
         switch (pgSource)
         {
             case PgSourceAutomaticFromSkill AsAutomaticFromSkill:
-                PgSkill? FromSkill = AsAutomaticFromSkill.Skill_Key is not null ? SkillObjects.Get(AsAutomaticFromSkill.Skill_Key) : null;
+                PgSkill? FromSkill = AsAutomaticFromSkill.Skill_Key is not null ? SkillObjects.Get(AsAutomaticFromSkill.Skill_Key.Substring(1)) : null;
                 return $"skillup in {FromSkill?.ObjectName}";
             case PgSourceEffect AsEffect:
                 PgEffect? FromEffect = AsEffect.Effect_Key is not null ? EffectObjects.Get(AsEffect.Effect_Key) : null;
@@ -438,8 +438,8 @@ public class Character
             case PgSourceHangOut AsHangOut:
                 return $"hangout with {NpcName(AsHangOut.Npc)}";
             case PgSourceItem AsItem:
-                PgItem Item = ItemObjects.Get(AsItem.Item_Key!);
-                if (Item.KeywordTable.ContainsKey(ItemKeyword.Scroll) || Item.KeywordTable.ContainsKey(ItemKeyword.Document))
+                PgItem Item = ItemObjects.Get(AsItem.Item_Key?.Substring(1)!);
+                if (!Item.KeywordValuesList.TrueForAll((PgItemKeywordValues value) => value.Keyword != ItemKeyword.Scroll && value.Keyword != ItemKeyword.Document))
                     return $"using scroll '{Item.Name}'";
                 else
                     return $"using '{Item.Name}'";
@@ -462,7 +462,7 @@ public class Character
     {
         if (location.Npc_Key is string NpcKey)
         {
-            PgNpc Npc = NpcObjects.Get(NpcKey);
+            PgNpc Npc = NpcObjects.Get(NpcKey.Substring(1));
             return Npc.Name;
         }
         else if (location.NpcName.Length > 0)
