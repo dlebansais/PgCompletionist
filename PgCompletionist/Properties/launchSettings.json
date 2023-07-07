@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Projects\\PgCompletionist\\PgCompletionist\\bin\\x64\\Debug\\net481\\win-x64\\PgCompletionist.exe"
+    }
+  }
+}
