@@ -174,6 +174,10 @@ public class Character
         if (pgAbility.KeywordList.Contains(AbilityKeyword.Lint_NotLearnable))
             return true;
 
+        foreach (PgAbilityRequirement AbilityRequirement in pgAbility.SpecialCasterRequirementList)
+            if (AbilityRequirement is PgAbilityRequirementIsVolunteerGuide)
+                return true;
+
         if (pgAbility.AbilityGroup_Key is string AbilityGroupKey)
         {
             PgAbility AbilityGroup = Tools.GetAbility(AbilityGroupKey);
