@@ -13,6 +13,14 @@
         Loaded="OnMainWindowLoaded"
         Closing="OnMainWindowClosing"
         Title="{Binding TitleText}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Templates/CharacterSelectionTemplate.xaml"/>
+                <ResourceDictionary Source="Templates/Character.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource AddReportCommand}" Executed="OnAddReport"/>
         <CommandBinding Command="{StaticResource DeleteCommand}" Executed="OnDelete"/>

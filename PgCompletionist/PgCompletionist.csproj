@@ -15,7 +15,7 @@
     <Product />
     <Description>Project: Gorgon Completionist</Description>
     <Copyright>Copyright © 2023 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.394.70</AssemblyVersion>
+    <AssemblyVersion>1.0.394.71</AssemblyVersion>
     <FileVersion>1.0.394.59</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
