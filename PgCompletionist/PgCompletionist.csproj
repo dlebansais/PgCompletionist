@@ -33,15 +33,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<None Remove="Resources\main.ico" />
-	<None Remove="Resources\main.png" />
-	<None Remove="Resources\delete.png" />
+    <None Remove="Resources\main.ico" />
+    <None Remove="Resources\main.png" />
+    <None Remove="Resources\delete.png" />
   </ItemGroup>
 
   <ItemGroup>
-	<Resource Include="Resources\main.ico" />
-	<Resource Include="Resources\main.png" />
-	<Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\main.ico" />
+    <Resource Include="Resources\main.png" />
+    <Resource Include="Resources\delete.png" />
   </ItemGroup>
 
   <ItemGroup>
