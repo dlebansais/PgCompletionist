@@ -23,9 +23,6 @@
             <sys:Double>0.3</sys:Double>
             <sys:Double>1</sys:Double>
         </CompositeCollection>
-        <Style x:Key="{x:Type ListBoxItem}" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        </Style>
         <Style x:Key="ListBoxItemStretchDragDrop" TargetType="{x:Type ListBoxItem}">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="AllowDrop" Value="True"/>
