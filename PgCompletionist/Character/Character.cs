@@ -333,8 +333,8 @@ public class Character
                 continue;
             if (PgRecipe.KeywordList.Contains(RecipeKeyword.Lint_NotObtainable))
                 continue;
-            if (PgRecipe.KeywordList.Contains(RecipeKeyword.Lint_LevelTooHigh))
-                continue;
+            /*if (PgRecipe.KeywordList.Contains(RecipeKeyword.Lint_LevelTooHigh))
+                continue;*/
             if (!IsDruid && PgRecipe.KeywordList.Contains(RecipeKeyword.StorageCrateDruid))
                 continue;
 

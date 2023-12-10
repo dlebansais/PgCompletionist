@@ -9,14 +9,14 @@
         <Platforms>x64</Platforms>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <UseWPF>true</UseWPF>
-        <Version>1.0.395</Version>
+        <Version>1.0.399</Version>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
         <Description>Project: Gorgon Completionist</Description>
         <Copyright>Copyright © 2023 David Le Bansais</Copyright>
-        <AssemblyVersion>1.0.395.73</AssemblyVersion>
-        <FileVersion>1.0.395.59</FileVersion>
+        <AssemblyVersion>1.0.399.78</AssemblyVersion>
+        <FileVersion>1.0.399.76</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
         <NeutralLanguage>en-US</NeutralLanguage>
         <RootNamespace>PgCompletionist</RootNamespace>
@@ -56,8 +56,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="dlebansais.BlazorWpfCommonControls-Debug" Version="0.0.8" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="dlebansais.BlazorWpfCommonControls" Version="0.0.8" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.BlazorWpfCommonControls-Debug" Version="0.0.9" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.BlazorWpfCommonControls" Version="0.0.9" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary-Debug" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary" Version="1.0.5" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="System.Text.Json" Version="6.0.4" />
