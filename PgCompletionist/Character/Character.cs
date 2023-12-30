@@ -353,9 +353,14 @@ public class Character
                     Sources = Sources,
                 };
 
+                if (PgRecipe.Skill_Key is string SkillKey)
+                    NewItem.SkillKey = SkillKey;
+
                 MissingRecipes.Add(NewItem);
             }
         }
+
+        MissingRecipes.Sort(SortMissingRecipeBySkillAndName);
     }
 
     private bool IsFairyOnlyRecipe(PgRecipe pgRecipe)
@@ -414,6 +419,14 @@ public class Character
             return false;
 
         return !knownRecipeNameList.Contains(pgRecipe.InternalName);
+    }
+
+    private int SortMissingRecipeBySkillAndName(MissingRecipe recipe1, MissingRecipe recipe2)
+    {
+        int ComparisonBySkill = recipe1.SkillKey.CompareTo(recipe2.SkillKey);
+        int ComparisonByName = recipe1.Name.CompareTo(recipe2.Name);
+
+        return ComparisonBySkill != 0 ? ComparisonBySkill : ComparisonByName;
     }
 
     private string RecipeSources(PgSourceCollection sourceList)
