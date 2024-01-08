@@ -542,6 +542,27 @@ public class Character
             }
         }
 
+        NeverEatenFoods.Sort(SortFoodByGourmand);
+
         LastGourmandReportTime = reportTime;
+    }
+
+    private static int SortFoodByGourmand(NeverEatenFood f1, NeverEatenFood f2)
+    {
+        int Level1 = GetGourmandLevel(f1);
+        int Level2 = GetGourmandLevel(f2);
+
+        return Level1 - Level2;
+    }
+
+    private static int GetGourmandLevel(NeverEatenFood food)
+    {
+        PgItem FoodItem = ItemObjects.Get(food.Key);
+
+        foreach (KeyValuePair<string, int> Entry in FoodItem.SkillRequirementTable)
+            if (Entry.Key == "Gourmand")
+                return Entry.Value;
+
+        return 0;
     }
 }
