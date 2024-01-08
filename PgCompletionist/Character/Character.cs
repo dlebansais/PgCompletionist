@@ -542,24 +542,25 @@ public class Character
             }
         }
 
-        NeverEatenFoods.Sort(SortFoodByGourmand);
+        NeverEatenFoods.Sort(SortFoodByGourmandOrName);
 
         LastGourmandReportTime = reportTime;
     }
 
-    private static int SortFoodByGourmand(NeverEatenFood f1, NeverEatenFood f2)
+    private static int SortFoodByGourmandOrName(NeverEatenFood f1, NeverEatenFood f2)
     {
-        int Level1 = GetGourmandLevel(f1);
-        int Level2 = GetGourmandLevel(f2);
+        PgItem FoodItem1 = ItemObjects.Get(f1.Key);
+        PgItem FoodItem2 = ItemObjects.Get(f2.Key);
+        int Level1 = GetGourmandLevel(FoodItem1);
+        int Level2 = GetGourmandLevel(FoodItem2);
+        int Difference = Level1 - Level2;
 
-        return Level1 - Level2;
+        return Difference != 0 ? Difference : FoodItem1.Name.CompareTo(FoodItem2.Name);
     }
 
-    private static int GetGourmandLevel(NeverEatenFood food)
+    private static int GetGourmandLevel(PgItem item)
     {
-        PgItem FoodItem = ItemObjects.Get(food.Key);
-
-        foreach (KeyValuePair<string, int> Entry in FoodItem.SkillRequirementTable)
+        foreach (KeyValuePair<string, int> Entry in item.SkillRequirementTable)
             if (Entry.Key == "Gourmand")
                 return Entry.Value;
 
