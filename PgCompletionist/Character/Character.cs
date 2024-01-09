@@ -122,7 +122,6 @@ public class Character
                     UnobtainableAbilityList.Add(Tools.GetAbility(AbilityKey));
         }
 
-
         Dictionary<PgSkill, List<PgAbility>> SkillAbilitiesTable = new();
         SkillAbilitiesTable.Add(PgSkill.Unknown, new List<PgAbility>());
         SkillAbilitiesTable.Add(PgSkill.AnySkill, new List<PgAbility>());
@@ -140,10 +139,38 @@ public class Character
             if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || UnobtainableAbilityList.Contains(PgAbility))
                 continue;
 
-            if (!SkillAbilitiesTable.ContainsKey(PgSkill))
-                SkillAbilitiesTable.Add(PgSkill, new List<PgAbility>());
+            UpdateSkillAbilityTable(SkillAbilitiesTable, PgSkill, PgAbility);
 
-            SkillAbilitiesTable[PgSkill].Add(PgAbility);
+            if (KnownSkillTable.ContainsKey(PgSkill.Key))
+            {
+                bool IsTransferedToChildSkill = false;
+                foreach (string ParentSkillKey in PgSkill.ParentSkillList)
+                {
+                    PgSkill PgParentSkill = SkillObjects.Get(ParentSkillKey);
+                    if (KnownSkillTable.ContainsKey(ParentSkillKey))
+                    {
+                        Skill ParentSkill = KnownSkillTable[ParentSkillKey];
+                        foreach (string Ability in ParentSkill.Abilities)
+                        {
+                            if (Ability == PgAbility.InternalName)
+                            {
+                                ParentSkill.Abilities.Remove(Ability);
+
+                                Skill ChildSkill = KnownSkillTable[PgSkill.Key];
+                                ChildSkill.Abilities.Add(Ability);
+
+                                IsTransferedToChildSkill = true;
+                            }
+
+                            if (IsTransferedToChildSkill)
+                                break;
+                        }
+                    }
+
+                    if (IsTransferedToChildSkill)
+                        break;
+                }
+            }
         }
 
         foreach (string Key in SkillObjects.Keys)
@@ -156,6 +183,14 @@ public class Character
         }
 
         UpdateSkill(KnownSkillTable, "Unknown", string.Empty, 0, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
+    }
+
+    private static void UpdateSkillAbilityTable(Dictionary<PgSkill, List<PgAbility>> skillAbilitiesTable, PgSkill pgSkill, PgAbility pgAbility)
+    {
+        if (!skillAbilitiesTable.ContainsKey(pgSkill))
+            skillAbilitiesTable.Add(pgSkill, new List<PgAbility>());
+
+        skillAbilitiesTable[pgSkill].Add(pgAbility);
     }
 
     private bool IsIgnoredSkill(PgSkill pgSkill)
@@ -274,6 +309,10 @@ public class Character
                         missingAbilities.SkillName = "(No skill)";
                         missingAbilities.SkillIconId = 0;
                     }
+                }
+
+                if (PgAbility.Name.StartsWith("Fairy Fire"))
+                {
                 }
 
                 MissingAbility NewItem = new()
