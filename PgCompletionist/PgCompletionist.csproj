@@ -9,14 +9,14 @@
         <Platforms>x64</Platforms>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <UseWPF>true</UseWPF>
-        <Version>1.0.400</Version>
+        <Version>1.0.401</Version>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
         <Description>Project: Gorgon Completionist</Description>
         <Copyright>Copyright © 2023 David Le Bansais</Copyright>
-        <AssemblyVersion>1.0.400.80</AssemblyVersion>
-        <FileVersion>1.0.400.76</FileVersion>
+        <AssemblyVersion>1.0.401.82</AssemblyVersion>
+        <FileVersion>1.0.401.76</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
         <NeutralLanguage>en-US</NeutralLanguage>
         <RootNamespace>PgCompletionist</RootNamespace>

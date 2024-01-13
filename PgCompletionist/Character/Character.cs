@@ -311,10 +311,6 @@ public class Character
                     }
                 }
 
-                if (PgAbility.Name.StartsWith("Fairy Fire"))
-                {
-                }
-
                 MissingAbility NewItem = new()
                 {
                     Key = PgAbility.Key,
@@ -330,6 +326,10 @@ public class Character
 
     private bool IsAbilityMissing(PgAbility pgAbility, Skill? skill, int maxAbilityLevel)
     {
+        if (pgAbility.Name.StartsWith("Dampen 11"))
+        {
+        }
+
         if (skill is null)
             return true;
 
