@@ -253,10 +253,46 @@ public class Character
         if (skillKey.Length > 0 && knownSkillTable.ContainsKey(skillKey))
         {
             Skill Skill = knownSkillTable[skillKey];
+
+            PgSkill PgSkill = SkillObjects.Get(skillKey);
+            int LevelCap = 0;
+            int PreviousLevelCap = 0;
+            int LevelCapInterval = 0;
+
+            foreach (var Advancement in PgSkill.SkillAdvancementList)
+                if (Advancement is PgSkillAdvancementHint AdvancementHint)
+                {
+                    LevelCap = AdvancementHint.Level;
+
+                    if (LevelCapInterval == 0 && PreviousLevelCap > 0)
+                        LevelCapInterval = LevelCap - PreviousLevelCap;
+
+                    PreviousLevelCap = LevelCap;
+                }
+
+            if (LevelCapInterval == 0)
+                LevelCapInterval = 10;
+
+            LevelCap = 0;
+
+            foreach (var Advancement in PgSkill.SkillAdvancementList)
+                if (Advancement is PgSkillAdvancementHint AdvancementHint)
+                {
+                    if (LevelCap < AdvancementHint.Level + LevelCapInterval)
+                        LevelCap = AdvancementHint.Level + LevelCapInterval;
+                }
+
+            if (LevelCap == 0)
+                LevelCap = 50;
+
+            bool HasMoreLevels = false;
+            if (Skill.XpNeededForNextLevel > 0 && Skill.Level < LevelCap + Skill.BonusLevels)
+                HasMoreLevels = true;
+
             IsFound = true;
             int MaxAbilityLevel = 0;
 
-            if (Skill.XpTowardNextLevel > 0)
+            if (Skill.XpTowardNextLevel > 0 || HasMoreLevels)
             {
                 NonMaxedSkill NewItem = new NonMaxedSkill()
                 {
@@ -317,6 +353,10 @@ public class Character
                     Name = PgAbility.Name,
                     IconId = PgAbility.IconId,
                 };
+
+                if (PgAbility.Name == "Restorative Arrow 2")
+                {
+                }
 
                 missingAbilities.MissingAbilities.Add(NewItem);
             }
