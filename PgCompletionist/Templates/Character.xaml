@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:localconv="clr-namespace:Converters"
                     xmlns:conv="clr-namespace:Converters;assembly=XamlConverterLibrary"
-                    xmlns:localctrl="clr-namespace:CustomControls"
                     xmlns:ns1="clr-namespace:PgObjects;assembly=PgObjects"
                     xmlns:wpflayout="clr-namespace:WpfLayout;assembly=WpfLayout.Wpf"
                     xmlns:local="clr-namespace:PgCompletionist">

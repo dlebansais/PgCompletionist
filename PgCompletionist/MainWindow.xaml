@@ -36,7 +36,9 @@
             <TextBlock FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0">(V.I.P reports can be found in AppData\LocalLow\Elder Game\Project Gorgon\Reports)</TextBlock>
         </StackPanel>
         <Border DockPanel.Dock="Bottom" BorderBrush="DarkGray" BorderThickness="0,1,0,0">
-            <TextBlock Text="{Binding StatusText}" FontSize="16" Margin="10,5,10,5"/>
+            <TextBlock Text="{Binding StatusText}"
+                       FontSize="16"
+                       Margin="10,5,10,5"/>
         </Border>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsCharacterSelected, Converter={StaticResource convBooleanToObject}, ConverterParameter={StaticResource CollapsedVisible}}" Margin="10">
             <ContentControl Content="{Binding CurrentCharacter}" ContentTemplate="{StaticResource CharacterTemplate}" VerticalAlignment="Top"/>

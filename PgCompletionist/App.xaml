@@ -4,10 +4,9 @@
              xmlns:localconv="clr-namespace:Converters"
              xmlns:conv="clr-namespace:Converters;assembly=XamlConverterLibrary"
              xmlns:localsel="clr-namespace:Selectors"
-             xmlns:localctrl="clr-namespace:CustomControls"
              xmlns:wpflayout="clr-namespace:WpfLayout;assembly=WpfLayout.Wpf"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:PgCompletionist"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Startup="OnStartup">
     <Application.Resources>
         <conv:BooleanToObjectConverter x:Key="convBooleanToObject"/>
