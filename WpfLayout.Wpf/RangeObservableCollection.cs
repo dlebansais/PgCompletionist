@@ -213,7 +213,6 @@ namespace System.Collections.ObjectModel
       else
         foreach (KeyValuePair<int, List<T>> cluster in clusters)
           OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, cluster.Value, cluster.Key));
-
     }
 
     /// <summary>
