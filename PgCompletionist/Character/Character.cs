@@ -87,91 +87,19 @@ public class Character
         if (report.Skills is not JsonElement Skills)
             return;
 
-        JsonSerializerOptions Options = new()
-        {
-            Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
-            }
-        };
-
-        Dictionary<string, Skill> KnownSkillTable = new();
-        foreach (object? Item in Skills.EnumerateObject())
-            if (Item is JsonProperty Property)
-            {
-                string Name = Property.Name;
-
-                if (JsonSerializer.Deserialize<Skill>(Property.Value, Options) is Skill KnownSkill)
-                {
-                    KnownSkillTable.Add(Name, KnownSkill);
-                }
-            }
-
+        Dictionary<string, Skill> KnownSkillTable = FillKnownSkillTable(Skills);
         MissingSkills = new();
         NonMaxedSkills = new();
         MissingAbilitiesList.Clear();
         NeverEatenFoods = new();
-
-        List<PgAbility> UnobtainableAbilityList = new();
-
-        foreach (string Key in ItemObjects.Keys)
-        {
-            PgItem PgItem = ItemObjects.Get(Key);
-            if (!PgItem.KeywordValuesList.TrueForAll((PgItemKeywordValues value) => value.Keyword != ItemKeyword.Lint_NotObtainable))
-                if (PgItem.BestowAbility_Key is string AbilityKey)
-                    UnobtainableAbilityList.Add(Tools.GetAbility(AbilityKey));
-        }
+        List<PgAbility> UnobtainableAbilityList = FillUnobtainableAbilityList();
 
         Dictionary<PgSkill, List<PgAbility>> SkillAbilitiesTable = new();
         SkillAbilitiesTable.Add(PgSkill.Unknown, new List<PgAbility>());
         SkillAbilitiesTable.Add(PgSkill.AnySkill, new List<PgAbility>());
 
         foreach (string Key in AbilityObjects.Keys)
-        {
-            PgAbility PgAbility = AbilityObjects.Get(Key);
-            PgSkill PgSkill;
-
-            if (PgAbility.Skill_Key is string SkillKey)
-                PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : Tools.GetSkill(SkillKey));
-            else
-                PgSkill = PgSkill.Unknown;
-
-            if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || UnobtainableAbilityList.Contains(PgAbility))
-                continue;
-
-            UpdateSkillAbilityTable(SkillAbilitiesTable, PgSkill, PgAbility);
-
-            if (KnownSkillTable.ContainsKey(PgSkill.Key))
-            {
-                bool IsTransferedToChildSkill = false;
-                foreach (string ParentSkillKey in PgSkill.ParentSkillList)
-                {
-                    PgSkill PgParentSkill = SkillObjects.Get(ParentSkillKey);
-                    if (KnownSkillTable.ContainsKey(ParentSkillKey))
-                    {
-                        Skill ParentSkill = KnownSkillTable[ParentSkillKey];
-                        foreach (string Ability in ParentSkill.Abilities)
-                        {
-                            if (Ability == PgAbility.InternalName)
-                            {
-                                ParentSkill.Abilities.Remove(Ability);
-
-                                Skill ChildSkill = KnownSkillTable[PgSkill.Key];
-                                ChildSkill.Abilities.Add(Ability);
-
-                                IsTransferedToChildSkill = true;
-                            }
-
-                            if (IsTransferedToChildSkill)
-                                break;
-                        }
-                    }
-
-                    if (IsTransferedToChildSkill)
-                        break;
-                }
-            }
-        }
+            UpdateSkillAbilitiesTable(KnownSkillTable, UnobtainableAbilityList, SkillAbilitiesTable, Key);
 
         foreach (string Key in SkillObjects.Keys)
         {
@@ -183,6 +111,93 @@ public class Character
         }
 
         UpdateSkill(KnownSkillTable, "Unknown", string.Empty, 0, SkillAbilitiesTable[PgSkill.Unknown], sidebarOnly: true);
+    }
+
+    private Dictionary<string, Skill> FillKnownSkillTable(JsonElement skills)
+    {
+        JsonSerializerOptions Options = new()
+        {
+            Converters =
+            {
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+            }
+        };
+
+        Dictionary<string, Skill> KnownSkillTable = new();
+        foreach (object? Item in skills.EnumerateObject())
+            if (Item is JsonProperty Property)
+            {
+                string Name = Property.Name;
+
+                if (JsonSerializer.Deserialize<Skill>(Property.Value, Options) is Skill KnownSkill)
+                {
+                    KnownSkillTable.Add(Name, KnownSkill);
+                }
+            }
+
+        return KnownSkillTable;
+    }
+
+    private List<PgAbility> FillUnobtainableAbilityList()
+    {
+        List<PgAbility> UnobtainableAbilityList = new();
+
+        foreach (string Key in ItemObjects.Keys)
+        {
+            PgItem PgItem = ItemObjects.Get(Key);
+            if (!PgItem.KeywordValuesList.TrueForAll((PgItemKeywordValues value) => value.Keyword != ItemKeyword.Lint_NotObtainable))
+                if (PgItem.BestowAbility_Key is string AbilityKey)
+                    UnobtainableAbilityList.Add(Tools.GetAbility(AbilityKey));
+        }
+
+        return UnobtainableAbilityList;
+    }
+
+    private void UpdateSkillAbilitiesTable(Dictionary<string, Skill> knownSkillTable, List<PgAbility> unobtainableAbilityList, Dictionary<PgSkill, List<PgAbility>> skillAbilitiesTable, string abilityKey)
+    {
+        PgAbility PgAbility = AbilityObjects.Get(abilityKey);
+        PgSkill PgSkill;
+
+        if (PgAbility.Skill_Key is string SkillKey)
+            PgSkill = SkillKey.Length == 0 ? PgSkill.Unknown : (SkillKey == "AnySkill" ? PgSkill.AnySkill : Tools.GetSkill(SkillKey));
+        else
+            PgSkill = PgSkill.Unknown;
+
+        if (IsIgnoredSkill(PgSkill) || IsIgnoredAbility(PgAbility) || unobtainableAbilityList.Contains(PgAbility))
+            return;
+
+        UpdateSkillAbilityTable(skillAbilitiesTable, PgSkill, PgAbility);
+
+        if (knownSkillTable.ContainsKey(PgSkill.Key))
+        {
+            bool IsTransferedToChildSkill = false;
+            foreach (string ParentSkillKey in PgSkill.ParentSkillList)
+            {
+                PgSkill PgParentSkill = SkillObjects.Get(ParentSkillKey);
+                if (knownSkillTable.ContainsKey(ParentSkillKey))
+                {
+                    Skill ParentSkill = knownSkillTable[ParentSkillKey];
+                    foreach (string Ability in ParentSkill.Abilities)
+                    {
+                        if (Ability == PgAbility.InternalName)
+                        {
+                            ParentSkill.Abilities.Remove(Ability);
+
+                            Skill ChildSkill = knownSkillTable[PgSkill.Key];
+                            ChildSkill.Abilities.Add(Ability);
+
+                            IsTransferedToChildSkill = true;
+                        }
+
+                        if (IsTransferedToChildSkill)
+                            break;
+                    }
+                }
+
+                if (IsTransferedToChildSkill)
+                    break;
+            }
+        }
     }
 
     private static void UpdateSkillAbilityTable(Dictionary<PgSkill, List<PgAbility>> skillAbilitiesTable, PgSkill pgSkill, PgAbility pgAbility)
