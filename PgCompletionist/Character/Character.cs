@@ -255,35 +255,7 @@ public class Character
             Skill Skill = knownSkillTable[skillKey];
 
             PgSkill PgSkill = SkillObjects.Get(skillKey);
-            int LevelCap = 0;
-            int PreviousLevelCap = 0;
-            int LevelCapInterval = 0;
-
-            foreach (var Advancement in PgSkill.SkillAdvancementList)
-                if (Advancement is PgSkillAdvancementHint AdvancementHint)
-                {
-                    LevelCap = AdvancementHint.Level;
-
-                    if (LevelCapInterval == 0 && PreviousLevelCap > 0)
-                        LevelCapInterval = LevelCap - PreviousLevelCap;
-
-                    PreviousLevelCap = LevelCap;
-                }
-
-            if (LevelCapInterval == 0)
-                LevelCapInterval = 10;
-
-            LevelCap = 0;
-
-            foreach (var Advancement in PgSkill.SkillAdvancementList)
-                if (Advancement is PgSkillAdvancementHint AdvancementHint)
-                {
-                    if (LevelCap < AdvancementHint.Level + LevelCapInterval)
-                        LevelCap = AdvancementHint.Level + LevelCapInterval;
-                }
-
-            if (LevelCap == 0)
-                LevelCap = 50;
+            int LevelCap = GetLevelCaps(skillKey);
 
             bool HasMoreLevels = false;
             if (Skill.XpNeededForNextLevel > 0 && Skill.Level < LevelCap + Skill.BonusLevels)
@@ -322,6 +294,42 @@ public class Character
 
             MissingSkills.Add(NewItem);
         }
+    }
+
+    private int GetLevelCaps(string skillKey)
+    {
+        PgSkill PgSkill = SkillObjects.Get(skillKey);
+        int LevelCap = 0;
+        int PreviousLevelCap = 0;
+        int LevelCapInterval = 0;
+
+        foreach (var Advancement in PgSkill.SkillAdvancementList)
+            if (Advancement is PgSkillAdvancementHint AdvancementHint)
+            {
+                LevelCap = AdvancementHint.Level;
+
+                if (LevelCapInterval == 0 && PreviousLevelCap > 0)
+                    LevelCapInterval = LevelCap - PreviousLevelCap;
+
+                PreviousLevelCap = LevelCap;
+            }
+
+        if (LevelCapInterval == 0)
+            LevelCapInterval = 10;
+
+        LevelCap = 0;
+
+        foreach (var Advancement in PgSkill.SkillAdvancementList)
+            if (Advancement is PgSkillAdvancementHint AdvancementHint)
+            {
+                if (LevelCap < AdvancementHint.Level + LevelCapInterval)
+                    LevelCap = AdvancementHint.Level + LevelCapInterval;
+            }
+
+        if (LevelCap == 0)
+            LevelCap = 50;
+
+        return LevelCap;
     }
 
     private bool HasMissingAbilities(string skillKey, string skillObjectName, int skillIconId, Skill skill, List<PgAbility> skillAbilityList, Skill? unknownSkill, bool sidebarOnly, int maxAbilityLevel, out MissingAbilitesBySkill missingAbilities)
