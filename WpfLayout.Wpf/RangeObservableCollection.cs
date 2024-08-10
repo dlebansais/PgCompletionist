@@ -404,6 +404,12 @@ namespace System.Collections.ObjectModel
       using (BlockReentrancy())
       using (DeferEvents())
       {
+        ReplaceRangeInList(index, count, list);
+      }
+    }
+
+    private void ReplaceRangeInList(int index, int count, IList<T> list)
+    {
         var rangeCount = index + count;
         var addedCount = list.Count;
 
@@ -476,7 +482,6 @@ namespace System.Collections.ObjectModel
         {
           OnIndexerPropertyChanged();
         }
-      }
     }
 
     public void Sort(Comparison<T> comparison)
@@ -658,16 +663,5 @@ namespace System.Collections.ObjectModel
     }
 
     #endregion Private Types
-
-  }
-
-  /// <remarks>
-  /// To be kept outside <see cref="ObservableCollection{T}"/>, since otherwise, a new instance will be created for each generic type used.
-  /// </remarks>
-  internal static class EventArgsCache
-  {
-    internal static readonly PropertyChangedEventArgs CountPropertyChanged = new PropertyChangedEventArgs("Count");
-    internal static readonly PropertyChangedEventArgs IndexerPropertyChanged = new PropertyChangedEventArgs("Item[]");
-    internal static readonly NotifyCollectionChangedEventArgs ResetCollectionChanged = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
   }
 }
