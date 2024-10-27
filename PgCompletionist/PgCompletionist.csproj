@@ -4,19 +4,19 @@
         <OutputType>WinExe</OutputType>
         <PublishSingleFile>true</PublishSingleFile>
         <TargetFramework>net481</TargetFramework>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
         <Platforms>x64</Platforms>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <UseWPF>true</UseWPF>
-        <Version>1.0.409</Version>
+        <Version>1.0.415</Version>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
         <Description>Project: Gorgon Completionist</Description>
         <Copyright>Copyright © 2024 David Le Bansais</Copyright>
-        <AssemblyVersion>1.0.409.92</AssemblyVersion>
-        <FileVersion>1.0.409.92</FileVersion>
+        <AssemblyVersion>1.0.415.93</AssemblyVersion>
+        <FileVersion>1.0.415.93</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
         <NeutralLanguage>en-US</NeutralLanguage>
         <RootNamespace>PgCompletionist</RootNamespace>
@@ -48,11 +48,11 @@
         <PackageReference Include="Costura.Fody" Version="5.7.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Fody" Version="6.8.1">
+        <PackageReference Include="Fody" Version="6.8.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -60,7 +60,7 @@
         <PackageReference Include="dlebansais.BlazorWpfCommonControls" Version="0.0.9" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary-Debug" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="System.Text.Json" Version="8.0.4" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">

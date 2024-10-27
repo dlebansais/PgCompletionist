@@ -302,7 +302,7 @@ public partial class Character
                     IconId = PgAbility.IconId,
                 };
 
-                if (PgAbility.Name == "Restorative Arrow 2")
+                if (PgAbility.Name.StartsWith("Mindworm"))
                 {
                 }
 
@@ -322,6 +322,9 @@ public partial class Character
             return true;
 
         if (pgAbility.KeywordList.Contains(AbilityKeyword.Werewolf) && !IsLycanthrope)
+            return false;
+
+        if (pgAbility.KeywordList.Contains(AbilityKeyword.Lint_NotObtainable))
             return false;
 
         if (maxAbilityLevel > 0 && pgAbility.Level > maxAbilityLevel)
