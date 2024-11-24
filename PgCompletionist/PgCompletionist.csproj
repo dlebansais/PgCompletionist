@@ -9,14 +9,14 @@
         <Platforms>x64</Platforms>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <UseWPF>true</UseWPF>
-        <Version>1.0.415</Version>
+        <Version>1.0.416</Version>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
         <Description>Project: Gorgon Completionist</Description>
         <Copyright>Copyright © 2024 David Le Bansais</Copyright>
-        <AssemblyVersion>1.0.415.93</AssemblyVersion>
-        <FileVersion>1.0.415.93</FileVersion>
+        <AssemblyVersion>1.0.416.93</AssemblyVersion>
+        <FileVersion>1.0.416.93</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/PgCompletionist</RepositoryUrl>
         <NeutralLanguage>en-US</NeutralLanguage>
         <RootNamespace>PgCompletionist</RootNamespace>
@@ -60,7 +60,19 @@
         <PackageReference Include="dlebansais.BlazorWpfCommonControls" Version="0.0.9" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary-Debug" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="XamlConverterLibrary" Version="1.0.10" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="System.Text.Json" Version="8.0.5" />
+        <PackageReference Include="System.Text.Json" Version="9.0.0" />
+
+        <!-- System.Net.Http is added to mitigate vulnerability. -->
+        <!-- Remove as soon as one of the packages above no longer depends on the vulnerable version -->
+        <PackageReference Include="System.Net.Http" Version="4.3.4" />
+
+        <!-- System.Text.RegularExpressions is added to mitigate vulnerability. -->
+        <!-- Remove as soon as one of the packages above no longer depends on the vulnerable version -->
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+
+        <!-- System.Private.Uri is added to mitigate vulnerability. -->
+        <!-- Remove as soon as one of the packages above no longer depends on the vulnerable version -->
+        <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">
