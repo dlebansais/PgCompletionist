@@ -175,6 +175,9 @@ public partial class Character
         if (!IsDruid && skillKey == "Druid")
             return true;
 
+        if (!IsVampire && skillKey == "Vampirism")
+            return true;
+
         if (!IsFae && (skillKey == "Race_Fae" || skillKey == "FairyMagic"))
             return true;
 
@@ -314,7 +317,7 @@ public partial class Character
 
     private bool IsAbilityMissing(PgAbility pgAbility, Skill? skill, int maxAbilityLevel)
     {
-        if (pgAbility.Name.StartsWith("Dampen 11"))
+        if (pgAbility.Name.StartsWith("Giant Bat Form"))
         {
         }
 

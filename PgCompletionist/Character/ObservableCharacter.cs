@@ -28,6 +28,7 @@ public class ObservableCharacter : INotifyPropertyChanged
     public bool IsDwarf { get { return Item.IsDwarf; } }
     public bool IsLycanthrope { get { return Item.IsLycanthrope; } }
     public bool IsDruid { get { return Item.IsDruid; } }
+    public bool IsVampire { get { return Item.IsVampire; } }
     public WpfObservableRangeCollection<MissingSkill> MissingSkills { get; } = new();
     public bool HasMissingSkills { get { return MissingSkills.Count > 0; } }
     public WpfObservableRangeCollection<NonMaxedSkill> NonMaxedSkills { get; } = new();

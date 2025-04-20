@@ -26,6 +26,7 @@ public partial class Character
     public bool IsDwarf { get; set; }
     public bool IsLycanthrope { get; set; }
     public bool IsDruid { get; set; }
+    public bool IsVampire { get; set; }
     public List<MissingSkill> MissingSkills { get; set; } = new();
     public List<NonMaxedSkill> NonMaxedSkills { get; set; } = new();
     public List<MissingAbilitesBySkill> MissingAbilitiesList { get; set; } = new();
@@ -65,6 +66,20 @@ public partial class Character
                     }
                 }
             }
+        }
+
+        if (report.Skills is JsonElement Skills)
+        {
+            foreach (object? Item in Skills.EnumerateObject())
+                if (Item is JsonProperty Property)
+                {
+                    string Name = Property.Name;
+                    if (Name == "Vampirism")
+                    {
+                        IsVampire = true;
+                        break;
+                    }
+                }
         }
 
         if (report.Race is Race CharacterRace)

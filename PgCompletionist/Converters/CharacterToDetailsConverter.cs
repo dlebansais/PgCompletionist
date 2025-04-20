@@ -22,6 +22,7 @@ public class CharacterToDetailsConverter : IValueConverter
             Result = AddDetail(Result, AsCharacter.IsDwarf, "Dwarf");
             Result = AddDetail(Result, AsCharacter.IsLycanthrope, "Lycanthrope");
             Result = AddDetail(Result, AsCharacter.IsDruid, "Druid");
+            Result = AddDetail(Result, AsCharacter.IsVampire, "Vampire");
         }
 
         return Result.Length > 0 ? $"({Result})" : string.Empty;

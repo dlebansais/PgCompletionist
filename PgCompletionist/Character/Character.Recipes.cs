@@ -27,9 +27,9 @@ public partial class Character
                 continue;
             if (PgRecipe.KeywordList.Contains(RecipeKeyword.Lint_NotObtainable))
                 continue;
-            /*if (PgRecipe.KeywordList.Contains(RecipeKeyword.Lint_LevelTooHigh))
-                continue;*/
             if (!IsDruid && PgRecipe.KeywordList.Contains(RecipeKeyword.StorageCrateDruid))
+                continue;
+            if (!IsVampire && PgRecipe.KeywordList.Contains(RecipeKeyword.Vampirism))
                 continue;
 
             if (!IsFae && IsFairyOnlyRecipe(PgRecipe))
