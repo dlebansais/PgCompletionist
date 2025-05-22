@@ -37,7 +37,7 @@ public partial class Character
 
             if (IsRecipeMissing(PgRecipe, KnownRecipeNameList))
             {
-                string Sources = RecipeSources(PgRecipe.SourceList);
+                string Sources = RecipeSources(Key, PgRecipe.SourceList);
 
                 MissingRecipe NewItem = new()
                 {
@@ -123,11 +123,8 @@ public partial class Character
         return ComparisonBySkill != 0 ? ComparisonBySkill : ComparisonByName;
     }
 
-    private string RecipeSources(PgSourceCollection sourceList)
+    private string RecipeSources(string recipeKey, PgSourceCollection sourceList)
     {
-        if (sourceList.Count == 0)
-            return "no source";
-
         string Result = string.Empty;
 
         foreach (PgSource Item in sourceList)
@@ -137,6 +134,26 @@ public partial class Character
 
             Result += RecipeSource(Item);
         }
+
+        Dictionary<string, List<string>> RecipeFromRecipe = Groups.RecipeFromRecipeList;
+        string RecipeKeyWithPrefix = $"R{recipeKey}";
+
+        foreach (KeyValuePair<string, List<string>> Entry in RecipeFromRecipe)
+        {
+            string Key = Entry.Key;
+            List<string> RecipeList = Entry.Value;
+            if (RecipeList.Contains(RecipeKeyWithPrefix))
+            {
+                if (Result.Length > 0)
+                    Result += ", ";
+
+                PgRecipe SourceRecipe = RecipeObjects.Get(Key);
+                Result += $"using recipe {SourceRecipe.Name}";
+            }
+        }
+
+        if (Result.Length == 0)
+            return "no source";
 
         return Result;
     }
